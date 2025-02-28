@@ -6,6 +6,7 @@ from app.utils.MIDI.MidiHost import MidiHost
 from app.utils.Music.SamplesHost import SamplesHost
 from app.views.MainWindow.MainWindow import MainWindow
 from threading import Thread
+import data.database
 
 
 if __name__ == '__main__':
