@@ -9,9 +9,13 @@ export default {
   props: {
     label: {
       type: String,
-      default: '',
+    },
+    backgroundColor: {
+      type: String,
+      default: '#f4a7a4',
     }
   },
+  emits: ["click"],
   methods: {
     handleClick() {
       this.$emit('click');
@@ -22,7 +26,7 @@ export default {
 
 <style scoped>
 .generate-button {
-  background-color: #f4a7a4; /* Light pink background */
+  background-color: v-bind(backgroundColor); /* Light pink background */
   border: 1px solid black;
   border-radius: 10px;
   font-size: 20px;
@@ -33,6 +37,6 @@ export default {
 }
 
 .generate-button:hover {
-  background-color: #e49491; /* Slightly darker on hover */
+  filter: brightness(85%);
 }
 </style>

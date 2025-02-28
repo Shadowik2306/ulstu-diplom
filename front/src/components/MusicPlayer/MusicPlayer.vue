@@ -8,7 +8,7 @@
         <MusicPlayerName :text="this.music_data.name"/>
       </div>
       <div class="music-player">
-        <audio ref="audio" :src="this.music_data.link_to_song" preload="metadata"></audio>
+        <audio ref="audio" :src="this.music_data.music_url" preload="metadata"></audio>
         <div class="player">
           <MusicPlayerPlayButton class="play-button" v-model="is_playing" @toggle="playMusic"/>
           <MusicPlayerScroller class="scroller" v-model="music_place" :duration="duration" :is_playing="is_playing"/>
@@ -83,12 +83,11 @@ export default {
       this.audio.play()
 
       this.play_animation = setInterval(() => {
-        this.music_place += 1000
-      }, 1000)
+        this.music_place += 10
+      }, 10)
 
       setTimeout(() => {
-        clearInterval(this.play_animation)
-        this.play_animation = null
+        this.criticalStopMusic()
       }, this.duration)
     },
     deleteMusic() {

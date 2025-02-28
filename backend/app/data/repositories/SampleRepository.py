@@ -1,8 +1,8 @@
-from sqlalchemy import select
+from sqlalchemy import select, update, delete
 
 from app.data.database import async_session_maker
 from app.data.models import SampleModel
-from app.data.schemas.SampleSchema import SampleSchema, SampleCreateSchema
+from app.data.schemas.SampleSchema import SampleSchema, SampleCreateSchema, SampleUpdateConnection
 
 
 class SampleRepository:
@@ -12,12 +12,8 @@ class SampleRepository:
             query = select(SampleModel).where(sample_id == SampleModel.id)
             res = await session.execute(query)
 
-            # TODO Just checking the difference
-            print(res.scalar())
-            print(res.first())
-
-            preset_model: SampleModel = res.scalar()
-            return SampleSchema.model_validate(preset_model, from_attributes=True)
+            sample_model: SampleModel = res.scalar()
+            return SampleSchema.model_validate(sample_model, from_attributes=True)
 
     @classmethod
     async def create_one(cls, sample: SampleCreateSchema) -> SampleSchema:
@@ -34,3 +30,22 @@ class SampleRepository:
         for sample in samples:
             res.append(await cls.create_one(sample))
         return res
+
+    @classmethod
+    async def update_note(cls, sample_id: int, sample_update_indo: SampleUpdateConnection) -> SampleSchema:
+        async with (async_session_maker() as session):
+            query = update(SampleModel).where(sample_id == SampleModel.id
+                                              ).values(note_id=sample_update_indo.note_id)
+            await session.execute(query)
+            await session.commit()
+
+            return await cls.get(sample_id)
+
+    @classmethod
+    async def delete(cls, sample_id: int) -> int:
+        async with async_session_maker() as session:
+            query = delete(SampleModel).where(sample_id == SampleModel.id).returning(SampleModel)
+            await session.execute(query)
+            await session.commit()
+
+            return sample_id

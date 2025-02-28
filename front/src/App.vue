@@ -15,14 +15,14 @@ export default {
   <div class="app-container">
     <VerticalNavbar />
     <div class="content">
-      <SampleCreator />
+      <router-view/>
     </div>
   </div>
 </template>
 
 <style scoped>
 .app-container {
-  display: flex; /* Creates a flexbox layout */
+  display: flex;
 }
 
 .content {

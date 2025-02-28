@@ -36,4 +36,8 @@ export default {
   padding: 0;
 }
 
+.close-button:hover {
+  filter: brightness(85%);
+}
+
 </style>

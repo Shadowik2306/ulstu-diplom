@@ -1,21 +1,47 @@
-from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 
 from pathlib import Path
 
+from app.data.repositories.NoteRepository import NoteRepository
 from app.routers.file_router import router as file_router
 from app.routers.preset_router import router as preset_router
+from app.routers.samples_router import router as samples_router
 
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await NoteRepository.initialize_table()
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
+
+origins = [
+    "http://localhost:5173"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 app.include_router(file_router)
 app.include_router(preset_router)
+app.include_router(samples_router)
+
 
 @app.get("/")
-async def root():
+async def main(request: Request):
     return {"message": "Hello World"}
 
 
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
+
+
+

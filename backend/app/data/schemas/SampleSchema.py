@@ -5,6 +5,7 @@ class SampleSchema(BaseModel):
     id: int
     name: str
     music_url: str
+    note_id: int | None = None
 
 
 class SampleCreateSchema(BaseModel):
@@ -16,4 +17,10 @@ class SampleCreateSchema(BaseModel):
 class SampleCreateRequestSchema(BaseModel):
     text_request: str
     count: int
+
+
+class SampleUpdateConnection(BaseModel):
+    note_id: int | None = None
+
+
 
