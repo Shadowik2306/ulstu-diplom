@@ -1,15 +1,14 @@
-import time
 from pathlib import Path
 import os
 
-from .Sample import Sample
+from app.utils.Music.Sample import Sample
 
 class SamplesHost:
     _instance = None
 
     def __init__(
             self,
-            path_to_samples_dir: Path = Path(__file__).parent.parent.parent / "static" / "samples",
+            path_to_samples_dir: Path = Path(__file__).parent.parent.parent.parent / "static" / "samples",
     ):
         self.path_to_samples_dir = path_to_samples_dir
         self.__initialize_system_dir()

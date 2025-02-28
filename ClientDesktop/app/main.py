@@ -2,10 +2,11 @@ import sys
 
 from PySide6.QtWidgets import QApplication
 
-from utils.MIDI.MidiHost import MidiHost
-from utils.Music.SamplesHost import SamplesHost
-from views.MainWindow.MainWindow import MainWindow
+from app.utils.MIDI.MidiHost import MidiHost
+from app.utils.Music.SamplesHost import SamplesHost
+from app.views.MainWindow.MainWindow import MainWindow
 from threading import Thread
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

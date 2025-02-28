@@ -3,10 +3,10 @@ import sys
 from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QApplication, QWidget
 
-from utils.MIDI.ComputerKeyboard import ComputerKeyboard
-from utils.MIDI.MidiHost import MidiHost
-from utils.Music.SamplesHost import SamplesHost
-from .ui_DeviceWidget import Ui_DeviceWidget
+from app.utils.MIDI.ComputerKeyboard import ComputerKeyboard
+from app.utils.MIDI.MidiHost import MidiHost
+from app.utils.Music.SamplesHost import SamplesHost
+from app.views.DeviceWidget.ui_DeviceWidget import Ui_DeviceWidget
 
 
 class DeviceWidget(QWidget):

@@ -1,12 +1,12 @@
 import sys
 
-from PySide6.QtCore import QEvent, Qt, QObject
-from PySide6.QtWidgets import QApplication, QWidget, QListWidgetItem
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QApplication, QWidget
 
-from utils.MIDI.ComputerKeyboard import ComputerKeyboard
-from utils.Music.SamplesHost import SamplesHost
-from views.MainWindow.ui_MainWindow import Ui_MainWindow
-from views.DeviceWidget.DeviceWidget import DeviceWidget
+from app.utils.MIDI.ComputerKeyboard import ComputerKeyboard
+from app.utils.Music.SamplesHost import SamplesHost
+from app.views.MainWindow.ui_MainWindow import Ui_MainWindow
+from app.views.DeviceWidget.DeviceWidget import DeviceWidget
 
 
 class MainWindow(QWidget):

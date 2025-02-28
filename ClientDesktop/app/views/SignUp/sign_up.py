@@ -1,7 +1,7 @@
 import sys
 from PySide6.QtWidgets import QApplication, QWidget
 
-from ui_SignUp import Ui_SignUp
+from app.views.SignUp.ui_SignUp import Ui_SignUp
 
 
 class Widget(QWidget):
