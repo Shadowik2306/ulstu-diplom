@@ -6,8 +6,6 @@ import SampleCreator from "./components/SampleCreator.vue";
 import AllPresets from "./components/AllPresets.vue";
 
 
-
-
 const routes = [
     { path: '/'},
     { path: '/preset/:id', component: SampleCreator},

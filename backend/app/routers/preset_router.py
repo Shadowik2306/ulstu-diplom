@@ -1,7 +1,7 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 
 from app.data.repositories.PresetRepository import PresetRepository
-from app.data.schemas.PresetSchema import PresetSchema, PresetCreateSchema
+from app.data.schemas.PresetSchema import PresetSchema, PresetCreateSchema, PresetsPageSchema
 
 router = APIRouter(
     prefix="/presets",
@@ -15,8 +15,11 @@ async def get_preset(preset_id: int) -> PresetSchema:
 
 
 @router.get("/")
-async def get_all_presets() -> list[PresetSchema]:
-    res = await PresetRepository.get_all()
+async def get_all_presets(
+    page: int = Query(ge=0, default=0),
+    size: int = Query(ge=1, le=100, default=100),
+) -> PresetsPageSchema:
+    res = await PresetRepository.get_all(page, size)
     return res
 
 

@@ -15,11 +15,14 @@ export default {
     }
   },
   created() {
-    myFetch("/presets").then(res => {
+    myFetch("/presets?" + new URLSearchParams({
+      size: 10,
+      page: this.$route.query.page ? this.$route.query.page : 0,
+    }),).then(res => {
       return res.json()
-    }).then(presets => {
-      console.log(presets);
-      this.presets = presets
+    }).then(presets_page => {
+      console.log(presets_page);
+      this.presets = presets_page.presets
     })
   }
 }

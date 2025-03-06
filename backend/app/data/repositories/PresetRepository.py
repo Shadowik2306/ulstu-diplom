@@ -1,8 +1,10 @@
-from sqlalchemy import select
+import math
+
+from sqlalchemy import select, func
 
 from app.data.database import async_session_maker
 from app.data.models import PresetModel
-from app.data.schemas.PresetSchema import PresetSchema, PresetCreateSchema
+from app.data.schemas.PresetSchema import PresetSchema, PresetCreateSchema, PresetsPageSchema
 
 
 class PresetRepository:
@@ -16,13 +18,24 @@ class PresetRepository:
             return PresetSchema.model_validate(preset_model, from_attributes=True)
 
     @classmethod
-    async def get_all(cls) -> list[PresetSchema]:
+    async def get_all(cls, page, size) -> PresetsPageSchema:
         async with (async_session_maker() as session):
-            query = select(PresetModel)
+            query = select(func.count()).select_from(PresetModel)
+            res = await session.execute(query)
+            total_pages = math.ceil(res.scalar() / size)
+
+            query = select(PresetModel).limit(size).offset(page * size)
             res = await session.execute(query)
             presets_models = res.scalars().all()
 
-            return [PresetSchema.model_validate(preset_model, from_attributes=True) for preset_model in presets_models]
+            presets_page = PresetsPageSchema.model_validate({
+                "presets": [PresetSchema.model_validate(preset_model, from_attributes=True) for preset_model in presets_models],
+                "page": page,
+                "size": size,
+                "total_pages": total_pages,
+            })
+
+            return presets_page
 
     @classmethod
     async def create(cls, preset: PresetCreateSchema) -> PresetSchema:
