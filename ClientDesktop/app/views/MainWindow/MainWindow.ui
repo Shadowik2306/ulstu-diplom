@@ -62,7 +62,7 @@
        <item>
         <widget class="QPushButton" name="addPresetButton">
          <property name="text">
-          <string>Add Presets</string>
+          <string>Update</string>
          </property>
         </widget>
        </item>

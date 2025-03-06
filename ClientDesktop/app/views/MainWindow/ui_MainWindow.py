@@ -91,7 +91,7 @@ class Ui_MainWindow(object):
         ___qlistwidgetitem1.setText(QCoreApplication.translate("MainWindow", u"Test Music 2", None));
         self.SoundsWidget.setSortingEnabled(__sortingEnabled)
 
-        self.addPresetButton.setText(QCoreApplication.translate("MainWindow", u"Add Presets", None))
+        self.addPresetButton.setText(QCoreApplication.translate("MainWindow", u"Update", None))
         self.ComputerKeyboardButton.setText(QCoreApplication.translate("MainWindow", u"Computer Keyboard", None))
     # retranslateUi
 
