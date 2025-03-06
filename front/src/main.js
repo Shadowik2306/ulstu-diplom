@@ -1,19 +1,21 @@
 import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
-import {createRouter, createWebHashHistory} from 'vue-router'
+import {createRouter, createWebHistory} from 'vue-router'
 import SampleCreator from "./components/SampleCreator.vue";
+import AllPresets from "./components/AllPresets.vue";
 
 
 
 
 const routes = [
     { path: '/'},
-    { path: '/preset/:id', component: SampleCreator}
+    { path: '/preset/:id', component: SampleCreator},
+    { path: '/presets', component: AllPresets},
 ]
 
 const router = createRouter({
-    history: createWebHashHistory(),
+    history: createWebHistory(),
     linkActiveClass: 'active',
     routes
 })

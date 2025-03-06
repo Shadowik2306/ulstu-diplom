@@ -11,6 +11,7 @@ class PresetModel(CustomBaseModel):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
+    color: Mapped[str]
 
     samples: Mapped[list['SampleModel']] = relationship(back_populates='preset', lazy='selectin')
 

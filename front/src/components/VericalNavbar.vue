@@ -1,13 +1,14 @@
 <template>
   <nav class="vertical-navbar">
-    <div class="logo">
+    <div class="logo" @click="navigate('/')">
       <span v-for="(letter, index) in this.logo_text"
       :style="{color: colors[index % colors.length]}">
         {{letter}}
       </span>
     </div>
     <ul>
-      <li v-for="item in navItems" :key="item.name" @click="navigate(item.path)">
+      <li v-for="item in navItems" :key="item.name" @click="navigate(item.path)"
+          :class="{active: item.path === currentRouteName}">
         {{ item.name }}
       </li>
     </ul>
@@ -31,27 +32,28 @@ export default {
         "#FF8D8A",
         "#FFCC73",
         "#D797FF",
-        "#D797FF",
         "#F8FFAE",
         "#9BFFF0",
       ]
     }
   },
+  computed: {
+    currentRouteName() {
+      return this.$route.path;
+    }
+  },
   data() {
     return {
       navItems: [
-        { name: 'Home', path: '/' },
-        { name: 'About', path: '/about' },
-        { name: 'Services', path: '/services' },
-        { name: 'Contact', path: '/contact' }
-      ]
+        { name: 'All Presets', path: '/presets' },
+      ],
     };
   },
   methods: {
     navigate(path) {
       this.$router.push(path);
     }
-  }
+  },
 }
 </script>
 
@@ -70,11 +72,16 @@ export default {
 }
 
 .logo {
-  font-size: 30px;
+  font-size: 40px;
   font-weight: bold;
   padding: 20px 10px;
   text-align: center;
   -webkit-text-stroke: 1px #000;
+}
+
+.logo:hover {
+  filter: brightness(90%);
+  cursor: pointer;
 }
 
 .vertical-navbar ul {
@@ -86,10 +93,14 @@ export default {
 .vertical-navbar li {
   padding: 10px;
   cursor: pointer;
-  text-align: left;
+  text-align: center;
 }
 
 .vertical-navbar li:hover {
+  background-color: #e2e6ea;
+}
+
+.vertical-navbar li.active {
   background-color: #e2e6ea;
 }
 </style>

@@ -6,6 +6,7 @@ from app.data.schemas.SampleSchema import SampleSchema
 class PresetSchema(BaseModel):
     id: int
     name: str
+    color: str
     samples: list["SampleSchema"]
 
 

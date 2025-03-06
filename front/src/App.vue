@@ -38,5 +38,6 @@ export default {
 
 * {
   font-family: "golos-text", serif;
+  color: #fff
 }
 </style>
