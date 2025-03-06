@@ -16,7 +16,7 @@ export default {
   },
   created() {
     myFetch("/presets?" + new URLSearchParams({
-      size: 10,
+      size: 15,
       page: this.$route.query.page ? this.$route.query.page : 0,
     }),).then(res => {
       return res.json()
