@@ -1,7 +1,10 @@
 <template>
   <nav class="vertical-navbar">
     <div class="logo">
-      MyLogo
+      <span v-for="(letter, index) in this.logo_text"
+      :style="{color: colors[index % colors.length]}">
+        {{letter}}
+      </span>
     </div>
     <ul>
       <li v-for="item in navItems" :key="item.name" @click="navigate(item.path)">
@@ -14,6 +17,26 @@
 <script>
 export default {
   name: 'VerticalNavbar',
+  props: {
+    logo_text: {
+      type: String,
+      default: 'Tinkling',
+    },
+    colors: {
+      type: Array,
+      default: [
+        "#B4FFAE",
+        "#FFBBDF",
+        "#86E3EF",
+        "#FF8D8A",
+        "#FFCC73",
+        "#D797FF",
+        "#D797FF",
+        "#F8FFAE",
+        "#9BFFF0",
+      ]
+    }
+  },
   data() {
     return {
       navItems: [
@@ -47,10 +70,11 @@ export default {
 }
 
 .logo {
-  font-size: 20px;
+  font-size: 30px;
   font-weight: bold;
   padding: 20px 10px;
   text-align: center;
+  -webkit-text-stroke: 1px #000;
 }
 
 .vertical-navbar ul {
