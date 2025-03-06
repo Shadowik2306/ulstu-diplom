@@ -2,11 +2,11 @@ import sys
 
 from PySide6.QtWidgets import QApplication
 
+from app.data.repositories.NoteRepository import NoteRepository
 from app.utils.MIDI.MidiHost import MidiHost
-from app.utils.Music.SamplesHost import SamplesHost
+from app.utils.Music.PresetHost import PresetHost
 from app.views.MainWindow.MainWindow import MainWindow
 from threading import Thread
-import data.database
 
 
 if __name__ == '__main__':
@@ -14,8 +14,10 @@ if __name__ == '__main__':
     widget = MainWindow()
     widget.show()
 
-    SamplesHost()
+    PresetHost()
     midi_host = MidiHost()
+
+    NoteRepository.initialize_table()
 
     thread = Thread(target=midi_host.listen_for_midi)
     thread.start()

@@ -5,7 +5,7 @@ from PySide6.QtWidgets import QApplication, QWidget
 
 from app.utils.MIDI.ComputerKeyboard import ComputerKeyboard
 from app.utils.MIDI.MidiHost import MidiHost
-from app.utils.Music.SamplesHost import SamplesHost
+from app.utils.Music.PresetHost import PresetHost
 from app.views.DeviceWidget.ui_DeviceWidget import Ui_DeviceWidget
 
 
@@ -23,9 +23,9 @@ class DeviceWidget(QWidget):
         self.is_muted = False
         self.is_enabled = False
 
-        self.sample_host = SamplesHost()
+        self.sample_host = PresetHost()
 
-        self.sample = None
+        self.sample_name = None
         self.ui.PresetNameLabel.setText("No Sample")
         self.ui.RemovePresetButton.disabled = True
         self.ui.RemovePresetButton.setStyleSheet("")
@@ -77,14 +77,14 @@ class DeviceWidget(QWidget):
         super().mousePressEvent(event)
 
     def set_sample(self, preset):
-        self.sample = self.sample_host.samples[preset]
+        self.sample_name = preset
 
         self.ui.PresetNameLabel.setText(preset)
         self.ui.RemovePresetButton.setStyleSheet("background-color: red")
         self.ui.RemovePresetButton.disabled = False
 
     def remove_sample(self):
-        self.sample = None
+        self.sample_name = None
 
         self.ui.PresetNameLabel.setText("No Sample")
         self.ui.RemovePresetButton.setStyleSheet("")
@@ -109,11 +109,10 @@ class DeviceWidget(QWidget):
         self.current_subscription.add_subscriber(self)
 
     def subscribe_action(self, num):
-        if not self.sample or not self.is_enabled:
+        if not self.sample_name or not self.is_enabled:
             return
         volume = self.ui.VolumeSlider.value() / 100 if not self.is_muted else 0
-        self.sample.play_note_by_num(num, volume)
-
+        self.sample_host.presets[self.sample_name].play_note(num % 12 + 1, volume)
 
     def midihost_check(self):
         new_devices = list(self.midihost.active_listeners.keys())

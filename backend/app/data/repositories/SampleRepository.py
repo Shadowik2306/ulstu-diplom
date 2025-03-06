@@ -16,6 +16,19 @@ class SampleRepository:
             return SampleSchema.model_validate(sample_model, from_attributes=True)
 
     @classmethod
+    async def get_all(cls, connected: bool = False, **kwargs) -> list[SampleSchema]:
+        async with async_session_maker() as session:
+            if connected:
+                query = select(SampleModel).filter_by(**kwargs).filter(SampleModel.note_id.is_not(None))
+            else:
+                query = select(SampleModel).filter_by(**kwargs)
+            res = await session.execute(query)
+
+            samples_models: list[SampleModel] = res.scalars().all()
+            return [SampleSchema.model_validate(sample_model, from_attributes=True) for sample_model in samples_models]
+
+
+    @classmethod
     async def create_one(cls, sample: SampleCreateSchema) -> SampleSchema:
         async with async_session_maker() as session:
             new_sample = SampleModel(**sample.model_dump())

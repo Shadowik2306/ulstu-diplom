@@ -1,6 +1,6 @@
 from sqlalchemy import select
 
-from app.data.database import async_session_maker
+from app.data.database import session_maker
 from app.data.models import NoteModel
 
 notes_data = [
@@ -21,16 +21,17 @@ notes_data = [
 
 class NoteRepository:
     @classmethod
-    async def initialize_table(cls):
-        async with async_session_maker() as session:
+    def initialize_table(cls):
+        with session_maker() as session:
             for note in notes_data:
                 query = select(NoteModel).where(note["id"] == NoteModel.id)
 
-                res = await session.execute(query)
+                res = session.execute(query)
+                note_model = res.scalar()
 
-                if res.scalar():
+                if note_model:
                     continue
 
                 new_note = NoteModel(**note)
                 session.add(new_note)
-                await session.commit()
+                session.commit()

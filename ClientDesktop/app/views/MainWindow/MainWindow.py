@@ -4,7 +4,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication, QWidget
 
 from app.utils.MIDI.ComputerKeyboard import ComputerKeyboard
-from app.utils.Music.SamplesHost import SamplesHost
+from app.utils.Music.PresetHost import PresetHost
 from app.views.MainWindow.ui_MainWindow import Ui_MainWindow
 from app.views.DeviceWidget.DeviceWidget import DeviceWidget
 
@@ -16,11 +16,12 @@ class MainWindow(QWidget):
         self.ui.setupUi(self)
         self.setWindowTitle("")
 
-        self.samples_host = SamplesHost()
+        self.preset_host = PresetHost()
         self.selected_device: DeviceWidget | None = None
 
         self.computer_keyboard_active = False
         self.ui.ComputerKeyboardButton.clicked.connect(self.computer_keyboard_clicked)
+        self.ui.addPresetButton.clicked.connect(self.update_button)
 
         midi_1 = DeviceWidget(
             name="MIDI 1",
@@ -43,7 +44,7 @@ class MainWindow(QWidget):
     def __load_items(self):
         self.ui.SoundsWidget.clear()
         self.ui.SoundsWidget.addItems(
-            self.samples_host.samples.keys()
+            [preset for preset in self.preset_host.presets.keys()]
         )
 
     def widget_clicked(self, clicked_widget):
@@ -55,6 +56,8 @@ class MainWindow(QWidget):
         clicked_widget.widget_selected()
 
     def sample_double_clicked(self, item):
+        if not self.selected_device:
+            return
         self.selected_device.set_sample(item.text())
 
     def computer_keyboard_clicked(self, clicked_widget):
@@ -93,6 +96,19 @@ class MainWindow(QWidget):
         if self.computer_keyboard_active:
             self.ui.ComputerKeyboardButton.setStyleSheet("")
             self.computer_keyboard_active = False
+
+    def update_button(self):
+        self.preset_host.update()
+        self.ui.SoundsWidget.clear()
+        new_presets = [preset for preset in self.preset_host.presets.keys()]
+        self.ui.SoundsWidget.addItems(
+            new_presets
+        )
+
+        for widget in self.widgets:
+            if widget.sample_name not in new_presets:
+                widget.remove_sample()
+
 
 
 if __name__ == "__main__":

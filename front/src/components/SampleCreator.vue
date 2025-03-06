@@ -84,7 +84,7 @@ export default {
           this.music.push({
             id: sample.id,
             name: sample.name,
-            music_url: serverUrl + sample.music_url,
+            music_url: serverUrl + "/files/" + sample.music_url,
             note_id: sample.note_id,
           })
         }

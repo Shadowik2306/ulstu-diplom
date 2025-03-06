@@ -16,6 +16,15 @@ class PresetRepository:
             return PresetSchema.model_validate(preset_model, from_attributes=True)
 
     @classmethod
+    async def get_all(cls) -> list[PresetSchema]:
+        async with (async_session_maker() as session):
+            query = select(PresetModel)
+            res = await session.execute(query)
+            presets_models = res.scalars().all()
+
+            return [PresetSchema.model_validate(preset_model, from_attributes=True) for preset_model in presets_models]
+
+    @classmethod
     async def create(cls, preset: PresetCreateSchema) -> PresetSchema:
         async with async_session_maker() as session:
             new_preset = PresetModel(**preset.model_dump())
