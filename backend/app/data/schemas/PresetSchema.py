@@ -5,6 +5,7 @@ from app.data.schemas.Schema import PaginationSchema
 
 class PresetSchema(BaseModel):
     id: int
+    user_id: int
     name: str
     color: str
     samples: list["SampleSchema"]
@@ -16,5 +17,6 @@ class PresetsPageSchema(PaginationSchema):
 
 class PresetCreateSchema(BaseModel):
     name: str
+    color: str
 
 

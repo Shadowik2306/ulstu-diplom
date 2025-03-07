@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
+from starlette import status
 
 from app.data.repositories.UserRepository import UserRepository, JwtBlackListRepository
-from app.data.schemas.UserSchema import UserRegisterSchema, UserAddSchema
+from app.data.schemas.UserSchema import UserRegisterSchema, UserAddSchema, UserSchema, UserLoginSchema, TokenSchema
 from app.utils import auth
 
 router = APIRouter(
@@ -24,6 +25,41 @@ async def sign_up(
 ):
     res = await UserRepository.add_one(user)
     return res
+
+
+async def validate_auth_user(
+        user_login: UserLoginSchema,
+):
+    if not (user := await UserRepository().get_by_email(user_login.email)):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+        )
+
+    if not auth.validate_password(
+        password=user_login.password,
+        hashed_password=user.password,
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+        )
+
+    return user
+
+
+@router.post("/SingIn", description="# Получение новой пары jwt пользователя")
+async def sign_in(
+    user: UserSchema = Depends(validate_auth_user)
+):
+    jwt_payload = {
+        "sub": user.id,
+    }
+    token = auth.encode_jwt(jwt_payload)
+    return TokenSchema(
+        access_token=token,
+        token_type="Bearer",
+    )
 
 
 @router.post("/SingOut", description="# Выход из аккаунта")

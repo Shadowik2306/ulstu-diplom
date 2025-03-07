@@ -5,6 +5,7 @@ from sqlalchemy import select, func
 from app.data.database import async_session_maker
 from app.data.models import PresetModel
 from app.data.schemas.PresetSchema import PresetSchema, PresetCreateSchema, PresetsPageSchema
+from app.data.schemas.UserSchema import UserSchema
 
 
 class PresetRepository:
@@ -38,9 +39,12 @@ class PresetRepository:
             return presets_page
 
     @classmethod
-    async def create(cls, preset: PresetCreateSchema) -> PresetSchema:
+    async def create(cls, user: UserSchema, preset: PresetCreateSchema) -> PresetSchema:
         async with async_session_maker() as session:
-            new_preset = PresetModel(**preset.model_dump())
+            new_preset = PresetModel(
+                **preset.model_dump(),
+                user_id=user.id
+            )
 
             session.add(new_preset)
             await session.commit()

@@ -42,7 +42,7 @@ def encode_jwt(
 
 
 def decode_jwt(
-        token: str | bytes,
+        token: str,
         public_key: str = jwt_settings.public_key_path.read_text(),
         algorithm: str = jwt_settings.algorithm
 ):
@@ -86,21 +86,21 @@ async def get_current_auth_user_token(
 async def get_current_token_payload_user(
         token: str = Depends(get_current_auth_user_token),
 ) -> UserSchema:
-    try:
-        payload = decode_jwt(
-            token=token,
-        )
-    except InvalidTokenError as e:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="User not found",
-        )
+    # try:
+    payload = decode_jwt(
+        token=token,
+    )
+    # except InvalidTokenError as e:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_401_UNAUTHORIZED,
+    #         detail="User not found",
+    #     )
     return payload
 
 
 async def get_current_auth_user(
         payload: dict = Depends(get_current_token_payload_user),
-):
+) -> UserSchema:
     user: UserSchema | None = await UserRepository.get_one(payload['sub'])
     if user is None:
         raise HTTPException(

@@ -17,9 +17,9 @@ class UserRepository:
             return user.id
 
     @classmethod
-    async def get_by_username(cls, username):
+    async def get_by_email(cls, email):
         async with async_session_maker() as session:
-            query = select(UserModel).where(UserModel.username == username)
+            query = select(UserModel).where(email == UserModel.email)
             res = await session.execute(query)
             user_model: UserModel = res.scalars().first()
             return user_model
@@ -27,7 +27,7 @@ class UserRepository:
     @classmethod
     async def get_one(cls, id):
         async with (async_session_maker() as session):
-            query = select(UserModel).where(UserModel.id == id)
+            query = select(UserModel).where(id == UserModel.id)
             res = await session.execute(query)
             user_model: UserModel = res.scalars().first()
             return UserSchema.model_validate(user_model, from_attributes=True)

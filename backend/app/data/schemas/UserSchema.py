@@ -18,3 +18,13 @@ class UserSchema(BaseModel):
     username: str
     email: str
     password: bytes
+
+
+class UserLoginSchema(BaseModel):
+    email: str
+    password: str
+
+
+class TokenSchema(BaseModel):
+    access_token: str
+    token_type: str
