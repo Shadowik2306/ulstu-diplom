@@ -13,7 +13,7 @@ class AudioLDM2Generator:
         for i in range(num_samples):
             result = self.pipeline(
                 prompt=prompt,
-                audio_length_in_s=3.0,
+                audio_length_in_s=10.0,
                 num_inference_steps=100
             ).audios[0]
 
@@ -25,4 +25,4 @@ class AudioLDM2Generator:
 
 if __name__ == "__main__":
     ldm_model = AudioLDM2Generator()
-    ldm_model.generate_audio("Meow sound")
+    ldm_model.generate_audio("Romantic loft")

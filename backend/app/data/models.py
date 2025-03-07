@@ -30,7 +30,6 @@ class SampleModel(CustomBaseModel):
 
     __table_args__ = (
         UniqueConstraint('preset_id', 'note_id', name='uniq_notes_for_preset'),
-        CheckConstraint('note_id IS NOT NULL AND note_id > 0', name='note_id_not_null'),
     )
 
 

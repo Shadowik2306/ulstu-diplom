@@ -1,9 +1,7 @@
 from datetime import datetime, timedelta, timezone
 
 import jwt
-from jwt.exceptions import InvalidTokenError
 import bcrypt
-from fastapi import Depends, HTTPException, status
 
 from app.config import jwt_settings
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
