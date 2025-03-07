@@ -17,6 +17,11 @@ class PresetModel(CustomBaseModel):
     color: Mapped[str]
 
     samples: Mapped[list['SampleModel']] = relationship(back_populates='preset', lazy='selectin')
+    users_liked: Mapped[list['UserModel']] = relationship(
+        back_populates="favorites_presets",
+        secondary="UsersFavoritesPresets",
+        lazy='selectin'
+    )
 
 
 class SampleModel(CustomBaseModel):
@@ -52,6 +57,18 @@ class UserModel(CustomBaseModel):
     password: Mapped[bytes]
 
     presets: Mapped[list["PresetModel"]] = relationship(back_populates="user", lazy='selectin')
+    favorites_presets: Mapped[list["PresetModel"]] = relationship(
+        back_populates="users_liked",
+        secondary="UsersFavoritesPresets",
+        lazy='selectin'
+    )
+
+
+class UsersFavoritesPresets(CustomBaseModel):
+    __tablename__ = 'UsersFavoritesPresets'
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("User.id"), primary_key=True)
+    preset_id: Mapped[int] = mapped_column(ForeignKey("Preset.id"), primary_key=True)
 
 
 class JwtBlackListModel(CustomBaseModel):
