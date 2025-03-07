@@ -9,6 +9,7 @@ from app.data.repositories.NoteRepository import NoteRepository
 from app.routers.file_router import router as file_router
 from app.routers.preset_router import router as preset_router
 from app.routers.samples_router import router as samples_router
+from app.routers.auth_router import router as auth_router
 
 
 @asynccontextmanager
@@ -35,6 +36,8 @@ app.add_middleware(
 app.include_router(file_router)
 app.include_router(preset_router)
 app.include_router(samples_router)
+
+app.include_router(auth_router)
 
 
 @app.get("/")

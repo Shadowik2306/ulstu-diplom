@@ -37,8 +37,3 @@ async def get_file_by_name(file_name: str):
         return FileResponse(file_path)
     else:
         raise HTTPException(status_code=404, detail="File not found")
-
-
-@router.post("/upload")
-async def upload(file: UploadFile = File(...)):
-    return create_file(file)

@@ -10,6 +10,9 @@ class PresetModel(CustomBaseModel):
     __tablename__ = "Preset"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("User.id"))
+    user: Mapped["UserModel"] = relationship(back_populates="presets")
+
     name: Mapped[str]
     color: Mapped[str]
 
@@ -38,3 +41,22 @@ class NoteModel(CustomBaseModel):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
+
+
+class UserModel(CustomBaseModel):
+    __tablename__ = 'User'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    username: Mapped[str]
+    email: Mapped[str] = mapped_column(unique=True)
+    password: Mapped[bytes]
+
+    presets: Mapped[list["PresetModel"]] = relationship(back_populates="user", lazy='selectin')
+
+
+class JwtBlackListModel(CustomBaseModel):
+    __tablename__ = 'jwt_black_list'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    token: Mapped[str]
+
