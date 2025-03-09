@@ -3,13 +3,22 @@ import './style.css'
 import App from './App.vue'
 import {createRouter, createWebHistory} from 'vue-router'
 import SampleCreator from "./components/SampleCreator.vue";
-import AllPresets from "./components/AllPresets.vue";
+import ListOfPresets from "./components/ListOfPresets.vue";
+import SignInComponent from "./components/SignInComponent.vue";
+import SignUpComponent from "./components/SignUpComponent.vue";
+import ReactiveStorage from "vue-reactive-localstorage";
+import MyPresetsProxy from "./components/MyPresetsProxy.vue";
+
 
 
 const routes = [
     { path: '/'},
     { path: '/preset/:id', component: SampleCreator},
-    { path: '/presets', component: AllPresets},
+    { path: '/presets', component: ListOfPresets},
+    { path: '/my_presets', component: MyPresetsProxy},
+    { path: '/favorites', component: ListOfPresets},
+    { path: '/sign_in', component: SignInComponent},
+    { path: '/sign_up', component: SignUpComponent},
 ]
 
 const router = createRouter({
@@ -18,4 +27,5 @@ const router = createRouter({
     routes
 })
 
-createApp(App).use(router).mount('#app')
+
+createApp(App).use(router).use(ReactiveStorage, {}).mount('#app')

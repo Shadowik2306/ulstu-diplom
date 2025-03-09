@@ -86,15 +86,15 @@ async def get_current_auth_user_token(
 async def get_current_token_payload_user(
         token: str = Depends(get_current_auth_user_token),
 ) -> UserSchema:
-    # try:
-    payload = decode_jwt(
-        token=token,
-    )
-    # except InvalidTokenError as e:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_401_UNAUTHORIZED,
-    #         detail="User not found",
-    #     )
+    try:
+        payload = decode_jwt(
+            token=token,
+        )
+    except InvalidTokenError as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found",
+        )
     return payload
 
 

@@ -6,6 +6,30 @@ export default {
   components: {
     VerticalNavbar,
     SampleCreator,
+  },
+  data() {
+    return {
+      user: null
+    }
+  },
+  computed: {
+    user_info() {
+      return this.user
+    }
+  },
+  mounted() {
+    this.update_user_state()
+  },
+  methods: {
+    update_user_state() {
+      const res = localStorage.getItem('token_payload');
+      if (res === null) {
+        this.user = null;
+      }
+      else {
+        this.user = JSON.parse(res);
+      }
+    }
   }
 }
 
@@ -13,7 +37,9 @@ export default {
 
 <template>
   <div class="app-container">
-    <VerticalNavbar />
+    <VerticalNavbar class="navbar" ref="nav_bar"
+                    :user_info="this.user_info"
+    />
     <div class="content">
       <router-view/>
     </div>
@@ -21,14 +47,20 @@ export default {
 </template>
 
 <style scoped>
+
 .app-container {
   display: flex;
+  width: 100%;
+}
+
+.navbar {
+  width: 230px;
 }
 
 .content {
-  margin-left: 200px; /* Matches the width of the vertical navbar */
+  width: calc(100% - 230px);
   padding: 20px; /* Adds some padding for content */
-  width: calc(100% - 200px); /* Prevents overlap, calculates full width minus navbar */
+  margin-left: 250px;
 }
 
 @font-face {

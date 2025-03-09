@@ -1,6 +1,6 @@
 <script>
 export default {
-  name: 'TextCloud',
+  username: 'TextCloud',
   props: {
     text: {
       type: String,

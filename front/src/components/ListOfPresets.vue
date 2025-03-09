@@ -6,6 +6,16 @@ import {myFetch} from "../assets/myFetch.js";
 
 export default {
   components: {TextCloud, SearchComponent},
+  props: {
+    users_created: {
+      type: Boolean,
+      default: false
+    },
+    favorites: {
+      type: Boolean,
+      default: false
+    },
+  },
   data() {
     return {
       text_req: "",
@@ -15,13 +25,17 @@ export default {
     }
   },
   created() {
-    myFetch("/presets?" + new URLSearchParams({
-      size: 15,
+    let url = "/presets?"
+    if (this.users_created) {
+      url = "/presets/users_presets?"
+    }
+
+    myFetch(url + new URLSearchParams({
       page: this.$route.query.page ? this.$route.query.page : 0,
+      size: 15,
     }),).then(res => {
       return res.json()
     }).then(presets_page => {
-      console.log(presets_page);
       this.presets = presets_page.presets
     })
   }

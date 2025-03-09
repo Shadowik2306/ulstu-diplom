@@ -12,12 +12,19 @@
         {{ item.name }}
       </li>
     </ul>
+    <div v-if="!this.user_info" class="button-container">
+      <button class="btn sign-in" @click="navigate('/sign_in')">Sign In</button>
+      <button class="btn sign-up" @click="navigate('/sign_up')">Sign Up</button>
+    </div>
+    <div class="user-info" v-else @click="sign_out">
+      {{ this.user_info.username }}
+    </div>
   </nav>
 </template>
 
 <script>
 export default {
-  name: 'VerticalNavbar',
+  username: 'VerticalNavbar',
   props: {
     logo_text: {
       type: String,
@@ -35,25 +42,50 @@ export default {
         "#F8FFAE",
         "#9BFFF0",
       ]
-    }
+    },
   },
   computed: {
     currentRouteName() {
       return this.$route.path;
+    },
+    user_info() {
+      if (!this.storage.token_payload) {
+        return null
+      }
+      return JSON.parse(this.storage.token_payload);
+    },
+    navItems() {
+      let lst = this.public_nav_items;
+      if (this.user_info) {
+        lst = lst.concat(this.private_nav_items)
+      }
+      return lst;
     }
   },
   data() {
     return {
-      navItems: [
+      public_nav_items: [
         { name: 'All Presets', path: '/presets' },
       ],
+      private_nav_items: [
+        {name: "My Presets", path: '/my_presets'},
+        {name: "Favorites", path: '/favorites'},
+      ]
     };
   },
   methods: {
     navigate(path) {
       this.$router.push(path);
+    },
+    sign_out() {
+      delete this.storage.token_payload
+      delete this.storage.token_header
+      delete this.storage.token
     }
   },
+  mounted() {
+    console.log(this.user_info);
+  }
 }
 </script>
 
@@ -63,16 +95,18 @@ export default {
   top: 0;
   left: 0;
   height: 100%;
-  width: 200px;
-  background-color: #D9D9D9; /* Updated background color for the whole navbar */
-  color: black; /* Updated text color for the whole navbar */
+  width: 100%;
+  background-color: #D9D9D9;
+  color: black;
   border-right: 1px solid #ddd;
   padding: 10px;
-  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .logo {
-  font-size: 40px;
+  font-size: 50px;
   font-weight: bold;
   padding: 20px 10px;
   text-align: center;
@@ -88,9 +122,11 @@ export default {
   list-style: none;
   padding: 0;
   margin: 0;
+  flex-grow: 1; /* Allows the list to grow and fill available space */
 }
 
 .vertical-navbar li {
+  font-size: 20px;
   padding: 10px;
   cursor: pointer;
   text-align: center;
@@ -103,4 +139,44 @@ export default {
 .vertical-navbar li.active {
   background-color: #e2e6ea;
 }
+
+
+.button-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  wrap-option: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+
+}
+
+.btn {
+  font-size: 20px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.sign-in {
+  background-color: gray;
+  color: white;
+  border: none;
+}
+
+.sign-up {
+  background-color: transparent;
+  color: gray;
+  border: 2px solid gray;
+}
+
+.btn:hover {
+  filter: brightness(80%);
+}
+
+.user-info {
+  margin-bottom: 20px;
+}
+
 </style>

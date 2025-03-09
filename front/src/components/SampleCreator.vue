@@ -74,7 +74,7 @@ export default {
         return
       }
 
-      myFetch(`/presets/${this.$route.params.id}`
+      myFetch(`/preset/${this.$route.params.id}`
       ).then(response => {
         return response.json();
       }).then(preset => {
@@ -95,7 +95,7 @@ export default {
       if (this.$route.params.id === 0) {
         return
       }
-      myFetch(`/presets/${this.$route.params.id}/samples`, {
+      myFetch(`/preset/${this.$route.params.id}/samples`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -114,7 +114,7 @@ export default {
       })
     },
     update_sample(sample_id, note_id) {
-      myFetch(`/presets/${this.$route.params.id}/samples/${sample_id}`, {
+      myFetch(`/preset/${this.$route.params.id}/samples/${sample_id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json'
@@ -139,7 +139,7 @@ export default {
         console.warn('Item not found');
       }
 
-      myFetch(`/presets/${this.$route.params.id}/samples/${sample_id}`, {
+      myFetch(`/preset/${this.$route.params.id}/samples/${sample_id}`, {
         method: 'DELETE',
       }).then(response => {
         return response.text();

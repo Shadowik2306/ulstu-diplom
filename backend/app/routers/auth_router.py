@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
 from app.data.repositories.UserRepository import UserRepository, JwtBlackListRepository
-from app.data.schemas.UserSchema import UserRegisterSchema, UserAddSchema, UserSchema, UserLoginSchema, TokenSchema
+from app.data.schemas.UserSchema import UserRegisterSchema, UserAddSchema, UserSchema, UserLoginSchema, TokenSchema, \
+    TokenPayload
 from app.utils import auth
 
 router = APIRouter(
@@ -19,7 +20,7 @@ def create_user(
     return UserAddSchema(**user_dict)
 
 
-@router.post("/SignUp", description="# Регистрация нового аккаунта")
+@router.post("/sign_up", description="# Регистрация нового аккаунта")
 async def sign_up(
         user: UserAddSchema = Depends(create_user)
 ):
@@ -45,16 +46,14 @@ async def validate_auth_user(
             detail="Incorrect username or password",
         )
 
-    return user
+    return UserSchema.model_validate(user, from_attributes=True)
 
 
-@router.post("/SingIn", description="# Получение новой пары jwt пользователя")
+@router.post("/sing_in", description="# Получение новой пары jwt пользователя")
 async def sign_in(
     user: UserSchema = Depends(validate_auth_user)
 ):
-    jwt_payload = {
-        "sub": user.id,
-    }
+    jwt_payload = TokenPayload(**user.model_dump()).model_dump()
     token = auth.encode_jwt(jwt_payload)
     return TokenSchema(
         access_token=token,
@@ -62,7 +61,7 @@ async def sign_in(
     )
 
 
-@router.post("/SingOut", description="# Выход из аккаунта")
+@router.post("/sing_out", description="# Выход из аккаунта")
 async def sign_out(
         jwt_token: str = Depends(auth.get_current_auth_user_token)
 ):

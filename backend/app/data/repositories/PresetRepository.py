@@ -19,13 +19,13 @@ class PresetRepository:
             return PresetSchema.model_validate(preset_model, from_attributes=True)
 
     @classmethod
-    async def get_all(cls, page, size) -> PresetsPageSchema:
+    async def get_all(cls, page, size, **kwargs) -> PresetsPageSchema:
         async with (async_session_maker() as session):
-            query = select(func.count()).select_from(PresetModel)
+            query = select(func.count()).select_from(PresetModel).filter_by(**kwargs)
             res = await session.execute(query)
             total_pages = math.ceil(res.scalar() / size)
 
-            query = select(PresetModel).limit(size).offset(page * size)
+            query = select(PresetModel).filter_by(**kwargs).limit(size).offset(page * size)
             res = await session.execute(query)
             presets_models = res.scalars().all()
 

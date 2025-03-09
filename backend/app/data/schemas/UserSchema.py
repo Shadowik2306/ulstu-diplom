@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class UserRegisterSchema(BaseModel):
@@ -28,3 +28,8 @@ class UserLoginSchema(BaseModel):
 class TokenSchema(BaseModel):
     access_token: str
     token_type: str
+
+
+class TokenPayload(BaseModel):
+    sub: int = Field(..., validation_alias='id')
+    username: str

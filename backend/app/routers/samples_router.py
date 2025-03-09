@@ -7,7 +7,7 @@ from app.data.schemas.SampleSchema import SampleCreateSchema, SampleUpdateConnec
 from app.utils.music_generaion import create_samples, delete_sample_file
 
 router = APIRouter(
-    prefix="/presets/{preset_id}/samples",
+    prefix="/preset/{preset_id}/samples",
     tags=["Samples"]
 )
 
