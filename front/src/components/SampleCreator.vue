@@ -58,8 +58,30 @@ export default {
     },
   },
   watch: {
-    preset_name(newVal) {
-      if (!this.is_loaded) return;
+    preset_name(newVal, oldVal) {
+      if (newVal === "") {
+        if (window.confirm("If you delete full name, wou will delete preset. Are you sure?")) {
+          console.log("Just joking");
+
+          myFetch(`/preset/${this.$route.params.id}/`, {
+            method: "DELETE",
+          }).then(response => {
+            return response.json();
+          }).then((data) => {
+            console.log(data);
+          })
+
+          window.location.href = '/my_presets';
+          return;
+        }
+        else {
+          this.$nextTick(() => {
+            this.preset_name = oldVal;
+          })
+          return
+        }
+      }
+
       myFetch(`/preset/${this.$route.params.id}/`, {
         method: "PATCH",
         headers: {
@@ -69,6 +91,8 @@ export default {
           'name': newVal
         })
       })
+      console.log(newVal)
+      console.log(oldVal)
     }
   },
   methods: {
@@ -190,7 +214,7 @@ export default {
     <div class="request-area">
       <div class="name-and-search" v-if="editable">
         <InputComponent class="name"
-                        placeholder="Untitled"
+                        placeholder="UNSAVED"
                         v-model="preset_name"
                         :nullable="false"
         />

@@ -3,7 +3,7 @@
     <input type="text"
            :placeholder="this.placeholder"
            :value="modelValue"
-           @input="input($event)"
+           @change="input($event)"
     />
 
   </div>
@@ -28,12 +28,13 @@ export default {
   emits: ['update:modelValue'],
   data() {
     return {
-
+      oldValue: this.modelValue
     };
   },
   methods: {
     input(event) {
-      this.$emit('update:modelValue', event.target.value)
+      this.$emit('update:modelValue', event.target.value, this.oldValue)
+      this.oldValue = event.target.value
     },
   },
 };

@@ -95,7 +95,7 @@ export default {
       ).then(
           res => res.json()
       ).then( data => {
-        this.$router.push(`/preset/${data.id}`);
+        this.navigate(`/preset/${data.id}`);
       }).catch(error => {
         console.error(error)
       })

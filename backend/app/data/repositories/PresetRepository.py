@@ -23,13 +23,18 @@ class PresetRepository:
             return PresetSchema.model_validate(preset_model, from_attributes=True)
 
     @classmethod
-    async def get_all(cls, page, size, **kwargs) -> PresetsPageSchema:
+    async def get_all(cls, page, size, show_unsaved=False, **kwargs) -> PresetsPageSchema:
         async with (async_session_maker() as session):
             query = select(func.count()).select_from(PresetModel).filter_by(**kwargs)
+            if not show_unsaved:
+                query = query.filter(PresetModel.name != '')
+
             res = await session.execute(query)
             total_pages = math.ceil(res.scalar() / size)
 
             query = select(PresetModel).filter_by(**kwargs).limit(size).offset(page * size)
+            if not show_unsaved:
+                query = query.filter(PresetModel.name != '')
             res = await session.execute(query)
             presets_models = res.scalars().all()
 
@@ -43,10 +48,17 @@ class PresetRepository:
             return presets_page
 
     @classmethod
-    async def create(cls, user: UserSchema, preset: PresetCreateSchema) -> PresetSchema:
+    async def create_or_get_unsaved(cls, user: UserSchema, new_preset_data: PresetCreateSchema) -> PresetSchema:
         async with async_session_maker() as session:
+            query = select(PresetModel).where("" == PresetModel.name)
+            res = await session.execute(query)
+            preset = res.scalar()
+
+            if preset:
+                return PresetSchema.model_validate(preset, from_attributes=True)
+
             new_preset = PresetModel(
-                **preset.model_dump(),
+                **new_preset_data.model_dump(),
                 user_id=user.id
             )
 
@@ -72,4 +84,22 @@ class PresetRepository:
             preset.name = new_preset.name
             await session.commit()
 
-            return await cls.get(preset_id)
+            return PresetSchema.model_validate(preset, from_attributes=True)
+
+    @classmethod
+    async def delete(cls, user: UserSchema, preset_id: int) -> PresetSchema:
+        async with async_session_maker() as session:
+            query = select(PresetModel).where(preset_id == PresetModel.id)
+            res = await session.execute(query)
+            preset = res.scalar()
+
+            if preset.user_id != user.id:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="You do not have permission to perform this operation."
+                )
+
+            await session.delete(preset)
+            await session.commit()
+
+            return PresetSchema.model_validate(preset, from_attributes=True)

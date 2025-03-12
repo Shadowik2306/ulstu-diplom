@@ -45,6 +45,7 @@ export default {
     }),).then(res => {
       return res.json()
     }).then(presets_page => {
+      console.log(presets_page.presets)
       this.presets = presets_page.presets
       this.totalPages = presets_page.total_pages
     })
@@ -56,8 +57,10 @@ export default {
 <div class="main-container">
   <SearchComponent :model-value="this.text_req" placeholder="Search" />
   <div class="preset-container">
-    <TextCloud v-for="preset in this.presets" :text="preset.name === '' ? 'Untitled' : preset.name"
-               :background_color="preset.color" :link="'/preset/' + preset.id"/>
+    <TextCloud v-for="preset in this.presets"
+               :text="preset.name === '' ? 'UNSAVED' : preset.name"
+               :background_color="preset.color" :link="'/preset/' + preset.id"
+               :border="preset.name === '' ? 'dashed 1px black' : 'solid 1px black'"/>
   </div>
   <PaginationComponent
       class="pagination"

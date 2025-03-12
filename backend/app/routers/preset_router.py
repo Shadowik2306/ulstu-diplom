@@ -26,7 +26,7 @@ async def get_users_presets(
         page: int = Query(ge=1, default=0),
         size: int = Query(ge=1, le=100, default=100),
 ) -> PresetsPageSchema:
-    res = await PresetRepository.get_all(page - 1, size, user_id=user.id)
+    res = await PresetRepository.get_all(page - 1, size, show_unsaved=True, user_id=user.id)
     return res
 
 
@@ -52,7 +52,7 @@ async def create_preset(
             "#DDD96F"
         ])
     )
-    res = await PresetRepository.create(user, preset)
+    res = await PresetRepository.create_or_get_unsaved(user, preset)
     return res
 
 
@@ -74,3 +74,11 @@ async def update_preset(
         user: UserSchema = Depends(auth.get_current_auth_user),
 ):
     return await PresetRepository.update(user, preset_id, preset_update_info)
+
+
+@preset_router.delete("/")
+async def delete_preset(
+        preset_id: int,
+        user: UserSchema = Depends(auth.get_current_auth_user),
+):
+    return await PresetRepository.delete(user, preset_id)
