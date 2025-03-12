@@ -33,7 +33,9 @@ export default {
       ],
       request_text: "",
       preset_name: "",
+      preset_creator: 0,
       is_loaded: false,
+      editable: false,
     }
   },
   validations: {
@@ -56,7 +58,8 @@ export default {
     },
   },
   watch: {
-    preset_name(newVal, oldVal) {
+    preset_name(newVal) {
+      if (!this.is_loaded) return;
       myFetch(`/preset/${this.$route.params.id}/`, {
         method: "PATCH",
         headers: {
@@ -101,6 +104,11 @@ export default {
         console.log(preset)
         this.music = []
         this.preset_name = preset.name
+        if (this.storage.token_payload) {
+          const cur_user = JSON.parse(this.storage.token_payload).sub
+          this.editable = cur_user === preset.user_id
+        }
+
         for (let sample of preset.samples) {
           this.music.push({
             id: sample.id,
@@ -109,6 +117,7 @@ export default {
             note_id: sample.note_id,
           })
         }
+      }).then(() => {
         this.is_loaded = true
       })
     },
@@ -179,7 +188,7 @@ export default {
 <template>
   <div class="constructor" v-if="is_loaded">
     <div class="request-area">
-      <div class="name-and-search">
+      <div class="name-and-search" v-if="editable">
         <InputComponent class="name"
                         placeholder="Untitled"
                         v-model="preset_name"
@@ -191,17 +200,21 @@ export default {
                         @keyup.enter="this.create_samples"
         />
       </div>
-      <div class="generate-button-container">
+      <div v-else class="preset-name">
+        <TextCloud :text="this.preset_name"></TextCloud>
+      </div>
+      <div class="generate-button-container" v-if="editable">
         <ButtonComponent label="Generate" class="button" @click="this.create_samples"/>
       </div>
     </div>
-    <div class="constructor-area">
+    <div v-if="editable" class="constructor-area">
       <div class="notes-part">
         <NoteContainer v-for="note in this.notes_info" :note_object="note" :color="note.color"
                        @drop="onDrop($event, note.id)"
                        @dragenter.prevent
                        @dragover.prevent
                        @delete="this.delete_sample"
+
         />
       </div>
       <div class="music-list-group"
@@ -221,6 +234,9 @@ export default {
             style="margin-top: 30px "
         />
       </div>
+    </div>
+    <div v-else class="notes-container">
+      <NoteContainer v-for="note in this.notes_info" :note_object="note" :color="note.color" :editable="false"/>
     </div>
   </div>
 </template>
@@ -266,6 +282,13 @@ export default {
 .constructor-area {
   display: flex;
   justify-content: space-between;
+}
+
+.notes-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1vh;
 }
 
 .notes-part {

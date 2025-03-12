@@ -13,7 +13,7 @@
           <MusicPlayerPlayButton class="play-button" v-model="is_playing" @toggle="playMusic"/>
           <MusicPlayerScroller class="scroller" v-model="music_place" :duration="duration" :is_playing="is_playing"/>
         </div>
-        <div class="delete">
+        <div class="delete" v-if="this.deletable">
           <MusicPlayerDelete :background_color="this.background_color" @click="this.deleteMusic"/>
         </div>
       </div>
@@ -43,6 +43,10 @@ export default {
     music_data: {
       type: Object,
       required: true
+    },
+    deletable: {
+      type: Boolean,
+      default: true
     }
   },
   emits: ["delete"],

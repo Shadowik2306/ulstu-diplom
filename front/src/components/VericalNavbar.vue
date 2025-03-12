@@ -78,12 +78,13 @@ export default {
   },
   methods: {
     navigate(path) {
-      this.$router.push(path);
+      window.location.href = path;
     },
     sign_out() {
       delete this.storage.token_payload
       delete this.storage.token_header
       delete this.storage.token
+      this.navigate("/")
     },
     create_new_preset() {
       myFetch(

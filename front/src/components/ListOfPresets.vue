@@ -26,6 +26,12 @@ export default {
     }
   },
   created() {
+    if (this.users_created || this.favorites) {
+      if (!this.storage.token_payload) {
+        this.$router.push("/sign_in");
+      }
+    }
+
     let url = "/presets?"
     if (this.users_created) {
       url = "/presets/users_presets?"

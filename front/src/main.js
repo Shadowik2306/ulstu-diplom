@@ -7,7 +7,6 @@ import ListOfPresets from "./components/ListOfPresets.vue";
 import SignInComponent from "./components/SignInComponent.vue";
 import SignUpComponent from "./components/SignUpComponent.vue";
 import ReactiveStorage from "vue-reactive-localstorage";
-import MyPresetsProxy from "./components/MyPresetsProxy.vue";
 
 
 
@@ -15,7 +14,7 @@ const routes = [
     { path: '/'},
     { path: '/preset/:id', component: SampleCreator},
     { path: '/presets', component: ListOfPresets},
-    { path: '/my_presets', component: MyPresetsProxy},
+    { path: '/my_presets', component: ListOfPresets, props: {users_created: true}},
     { path: '/favorites', component: ListOfPresets},
     { path: '/sign_in', component: SignInComponent},
     { path: '/sign_up', component: SignUpComponent},

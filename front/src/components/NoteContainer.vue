@@ -11,6 +11,10 @@ export default {
     note_object: {
       type: Object,
       required: true,
+    },
+    editable: {
+      type: Boolean,
+      default: true,
     }
   },
   emits: ["delete"],
@@ -32,10 +36,12 @@ export default {
     <MusicPlayer v-else
                  :music_data="this.note_object.music"
                  :background_color="this.note_object.color"
-                 draggable="true"
+                 :draggable="this.editable"
                  class="music-container contain"
+                 :deletable="this.editable"
                  @delete="this.deleteMusic"
     />
+    <div v-if="!this.note_object.music" style="width: 9%"></div>
   </div>
 </template>
 
@@ -43,7 +49,7 @@ export default {
 
 .note-container {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 1vh;
   height: 7.5vh;
 }
@@ -66,7 +72,7 @@ export default {
 }
 
 .music-container.empty {
-  width: 70%;
+  width: 60%;
   height: 5vh;
   border-radius: 50px;
   border: solid black 1px;
@@ -74,7 +80,7 @@ export default {
 }
 
 .music-container.contain {
-  width: 85%;
+  width: 70%;
   height: 7.5vh;
   align-self: flex-end;
 }
