@@ -13,6 +13,10 @@ export default {
     link: {
       type: String,
       required: false,
+    },
+    border: {
+      type: String,
+      default: 'solid 1px black',
     }
   },
   methods: {
@@ -32,7 +36,7 @@ export default {
 <style scoped>
 .cloud {
   width: 100%;
-  border: solid 1px black;
+  border: v-bind(border);
   border-radius: 50px;
   display: flex;
   justify-content: center;

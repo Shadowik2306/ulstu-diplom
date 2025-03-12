@@ -1,11 +1,12 @@
 <script>
 
-import SearchComponent from "./SearchComponent.vue";
+import SearchComponent from "./InputComponent.vue";
 import TextCloud from "./TextCloud.vue";
+import PaginationComponent from "./PaginationComponent.vue";
 import {myFetch} from "../assets/myFetch.js";
 
 export default {
-  components: {TextCloud, SearchComponent},
+  components: {PaginationComponent, TextCloud, SearchComponent},
   props: {
     users_created: {
       type: Boolean,
@@ -19,9 +20,9 @@ export default {
   data() {
     return {
       text_req: "",
-      presets: [
-
-      ]
+      presets: [],
+      totalPages: 0,
+      page: 0
     }
   },
   created() {
@@ -30,13 +31,16 @@ export default {
       url = "/presets/users_presets?"
     }
 
-    myFetch(url + new URLSearchParams({
-      page: this.$route.query.page ? this.$route.query.page : 0,
+    this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
+
+    myFetch(url +  new URLSearchParams({
+      page: this.page,
       size: 15,
     }),).then(res => {
       return res.json()
     }).then(presets_page => {
       this.presets = presets_page.presets
+      this.totalPages = presets_page.total_pages
     })
   }
 }
@@ -44,10 +48,17 @@ export default {
 
 <template>
 <div class="main-container">
-  <SearchComponent :model-value="this.text_req"/>
+  <SearchComponent :model-value="this.text_req" placeholder="Search" />
   <div class="preset-container">
-    <TextCloud v-for="preset in this.presets" :text="preset.name" :background_color="preset.color" :link="'/preset/' + preset.id"/>
+    <TextCloud v-for="preset in this.presets" :text="preset.name === '' ? 'Untitled' : preset.name"
+               :background_color="preset.color" :link="'/preset/' + preset.id"/>
   </div>
+  <PaginationComponent
+      class="pagination"
+      :current-page="this.page"
+      :total-pages="this.totalPages"
+      :url="$route.path"
+  />
 </div>
 </template>
 
@@ -56,6 +67,11 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 3vh;
+  height: 95vh;
+}
+
+.pagination {
+  margin-top: auto;
 }
 
 .preset-container {

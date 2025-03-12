@@ -1,12 +1,13 @@
 <script>
 import MusicPlayer from "./MusicPlayer/MusicPlayer.vue";
 import NoteContainer from "./NoteContainer.vue";
-import SearchComponent from "./SearchComponent.vue";
+import SearchComponent from "./InputComponent.vue";
 import ButtonComponent from "./ButtonComponent.vue";
 import {myFetch, serverUrl} from "../assets/myFetch.js";
+import TextCloud from "./TextCloud.vue";
 
 export default {
-  components: {ButtonComponent, SearchComponent, MusicPlayer, NoteContainer},
+  components: {TextCloud, ButtonComponent, InputComponent: SearchComponent, MusicPlayer, NoteContainer},
   data(){
     return {
       notes_data: [
@@ -16,12 +17,12 @@ export default {
         {id: 4, name: "D#", color: "#FF8D8A"},
         {id: 5, name: "E", color: "#FFCC73"},
         {id: 6, name: "F", color: "#D797FF"},
-        {id: 7, name: "F#", color: "#D797FF"},
-        {id: 8, name: "G", color: "#F8FFAE"},
-        {id: 9, name: "G#", color: "#9BFFF0"},
-        {id: 10, name: "A", color: "#9BFFF0"},
-        {id: 11, name: "A#", color: "#9BFFF0"},
-        {id: 12, name: "B", color: "#9BFFF0"},
+        {id: 7, name: "F#", color: "#F8FFAE"},
+        {id: 8, name: "G", color: "#DADE55"},
+        {id: 9, name: "G#", color: "#F1DCC9"},
+        {id: 10, name: "A", color: "#448158"},
+        {id: 11, name: "A#", color: "#53A6FF"},
+        {id: 12, name: "B", color: "#CF7BA1"},
       ],
       music: [
         {id: 1, name: "Text Size", note_id: null, music_url: "https://assets.codepen.io/4358584/Anitek_-_Komorebi.mp3"},
@@ -31,7 +32,13 @@ export default {
         {id: 2, name: "Hello World Hello World", note_id: null, music_url: "https://files.freemusicarchive.org/storage-freemusicarchive-org/tracks/Poc47WdXrlsjaFHln2AaK9tSHg92VWlNbkTnjy7r.mp3"},
       ],
       request_text: "",
+      preset_name: "",
       is_loaded: false,
+    }
+  },
+  validations: {
+    raw_preset_name: {
+      minLength: 1,
     }
   },
   computed: {
@@ -45,6 +52,19 @@ export default {
           ...it,
           music: music || null
         };
+      })
+    },
+  },
+  watch: {
+    preset_name(newVal, oldVal) {
+      myFetch(`/preset/${this.$route.params.id}/`, {
+        method: "PATCH",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          'name': newVal
+        })
       })
     }
   },
@@ -74,12 +94,13 @@ export default {
         return
       }
 
-      myFetch(`/preset/${this.$route.params.id}`
+      myFetch(`/preset/${this.$route.params.id}/`
       ).then(response => {
         return response.json();
       }).then(preset => {
         console.log(preset)
         this.music = []
+        this.preset_name = preset.name
         for (let sample of preset.samples) {
           this.music.push({
             id: sample.id,
@@ -158,8 +179,21 @@ export default {
 <template>
   <div class="constructor" v-if="is_loaded">
     <div class="request-area">
-      <SearchComponent v-model="request_text"/>
-      <ButtonComponent label="Generate" class="button" @click="this.create_samples"/>
+      <div class="name-and-search">
+        <InputComponent class="name"
+                        placeholder="Untitled"
+                        v-model="preset_name"
+                        :nullable="false"
+        />
+        <InputComponent class="search"
+                        placeholder="Enter request..."
+                        v-model="request_text"
+                        @keyup.enter="this.create_samples"
+        />
+      </div>
+      <div class="generate-button-container">
+        <ButtonComponent label="Generate" class="button" @click="this.create_samples"/>
+      </div>
     </div>
     <div class="constructor-area">
       <div class="notes-part">
@@ -175,7 +209,17 @@ export default {
            @dragenter.prevent
            @dragover.prevent
       >
-        <MusicPlayer v-for="music in this.unused_music" :music_data="music" draggable="true" @delete="this.delete_sample"/>
+        <MusicPlayer v-for="music in this.unused_music"
+                     :music_data="music"
+                     draggable="true"
+                     @delete="this.delete_sample"
+        />
+        <TextCloud
+            v-if="this.unused_music.length === 0"
+            text="Any free tinkling."
+            border="dashed 1px black"
+            style="margin-top: 30px "
+        />
       </div>
     </div>
   </div>
@@ -187,6 +231,25 @@ export default {
   flex-direction: column;
   gap: 1vh;
   height: 100vh;
+}
+
+.generate-button-container {
+  display: flex;
+  justify-content: center;
+}
+
+.name-and-search {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.name-and-search .search {
+  width: 70%;
+}
+
+.name-and-search .name {
+  width: 25%;
 }
 
 .request-area {
@@ -216,7 +279,6 @@ export default {
 .music-list-group {
   width: 40%;
   height: 100%;
-  overflow-y: scroll;   /* Enable vertical scroll */
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -1,9 +1,9 @@
 <template>
   <div class="input-container">
     <input type="text"
-           placeholder="Enter request..."
+           :placeholder="this.placeholder"
            :value="modelValue"
-           @input="$emit('update:modelValue', $event.target.value)"
+           @input="input($event)"
     />
 
   </div>
@@ -15,22 +15,25 @@ export default {
     modelValue: {
       type: String,
       required: true
+    },
+    placeholder: {
+      type: String,
+      default: ""
+    },
+    nullable: {
+      type: Boolean,
+      default: true
     }
   },
   emits: ['update:modelValue'],
   data() {
     return {
-      inputValue: this.value,
+
     };
   },
   methods: {
-    emitValue() {
-      this.$emit('input', this.inputValue);
-    },
-  },
-  watch: {
-    value(newValue) {
-      this.inputValue = newValue;
+    input(event) {
+      this.$emit('update:modelValue', event.target.value)
     },
   },
 };

@@ -1,10 +1,14 @@
 import math
+from http import HTTPStatus
 
+from fastapi import HTTPException
 from sqlalchemy import select, func
+from sqlalchemy.orm import session
+from starlette import status
 
 from app.data.database import async_session_maker
 from app.data.models import PresetModel
-from app.data.schemas.PresetSchema import PresetSchema, PresetCreateSchema, PresetsPageSchema
+from app.data.schemas.PresetSchema import PresetSchema, PresetCreateSchema, PresetsPageSchema, PresetUpdateSchema
 from app.data.schemas.UserSchema import UserSchema
 
 
@@ -51,3 +55,21 @@ class PresetRepository:
             await session.refresh(new_preset)
 
             return PresetSchema.model_validate(new_preset, from_attributes=True)
+
+    @classmethod
+    async def update(cls, user: UserSchema, preset_id: int, new_preset: PresetUpdateSchema) -> PresetSchema:
+        async with async_session_maker() as session:
+            query = select(PresetModel).where(preset_id == PresetModel.id)
+            res = await session.execute(query)
+            preset = res.scalar()
+
+            if preset.user_id != user.id:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="You do not have permission to perform this operation."
+                )
+
+            preset.name = new_preset.name
+            await session.commit()
+
+            return await cls.get(preset_id)

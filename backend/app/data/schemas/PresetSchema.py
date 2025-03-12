@@ -19,4 +19,6 @@ class PresetCreateSchema(BaseModel):
     name: str
     color: str
 
+class PresetUpdateSchema(BaseModel):
+    name: str
 

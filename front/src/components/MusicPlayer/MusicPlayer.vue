@@ -120,7 +120,7 @@ export default {
     width: auto;
     align-self: end;
     margin-right: 20%;
-    height: 2.5vh;
+    height: 30px;
   }
 
   .music-player {

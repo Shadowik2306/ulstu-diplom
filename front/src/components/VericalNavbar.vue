@@ -7,7 +7,7 @@
       </span>
     </div>
     <ul>
-      <li v-for="item in navItems" :key="item.name" @click="navigate(item.path)"
+      <li v-for="item in navItems" :key="item.name" @click="item.action(item.params)"
           :class="{active: item.path === currentRouteName}">
         {{ item.name }}
       </li>
@@ -23,6 +23,8 @@
 </template>
 
 <script>
+import {myFetch} from "../assets/myFetch.js";
+
 export default {
   username: 'VerticalNavbar',
   props: {
@@ -65,11 +67,12 @@ export default {
   data() {
     return {
       public_nav_items: [
-        { name: 'All Presets', path: '/presets' },
+        { name: 'All Presets', action: this.navigate, params: ('/presets') },
       ],
       private_nav_items: [
-        {name: "My Presets", path: '/my_presets'},
-        {name: "Favorites", path: '/favorites'},
+        {name: "New Preset", action: this.create_new_preset},
+        {name: "My Presets", action: this.navigate, params: ('/my_presets')},
+        {name: "Favorites", action: this.navigate, params: ("/favorites"),},
       ]
     };
   },
@@ -81,6 +84,20 @@ export default {
       delete this.storage.token_payload
       delete this.storage.token_header
       delete this.storage.token
+    },
+    create_new_preset() {
+      myFetch(
+          "/presets",
+          {
+            method: "POST",
+          }
+      ).then(
+          res => res.json()
+      ).then( data => {
+        this.$router.push(`/preset/${data.id}`);
+      }).catch(error => {
+        console.error(error)
+      })
     }
   },
   mounted() {
