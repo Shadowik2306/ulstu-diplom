@@ -6,8 +6,10 @@ from pathlib import Path
 
 from sqlalchemy.exc import InvalidRequestError
 
+from app.data.repositories.MusicRepository import MusicRepository
 from app.data.repositories.SampleRepository import SampleRepository
-from app.data.schemas.SampleSchema import SampleCreateRequestSchema, SampleCreateSchema
+from app.data.schemas.SampleSchema import SampleCreateSchema
+from app.data.schemas.MusicSchema import MusicCreateRequestSchema, MusicCreateSchema
 
 music_place = Path(__file__).parent.parent.parent / "music_buff"
 static_place = Path(__file__).parent.parent.parent / "static"
@@ -37,7 +39,7 @@ def get_random_file_from_dir(directory_path):
     return directory_path / random.choice(files)
 
 
-async def create_samples(preset_id: int, sample_req: SampleCreateRequestSchema):
+async def create_samples(preset_id: int, sample_req: MusicCreateRequestSchema):
     if sample_req.text_request not in generation_dct:
         raise NotImplementedError(f"The sample request {sample_req.text_request} was not found.")
 
@@ -47,14 +49,15 @@ async def create_samples(preset_id: int, sample_req: SampleCreateRequestSchema):
         new_file_name = f"{int(time.time_ns())}.wav"
         shutil.copy(rnd_file, static_place / new_file_name)
 
-        new_sample_obj = {
-            "name": f"{sample_req.text_request}",
-            "preset_id": preset_id,
-            "music_url": f"{new_file_name}",
-            "note_id": None
-        }
+        music_model = await MusicRepository().create(MusicCreateSchema(
+            music_url=f"{new_file_name}"
+        ))
 
-        res.append(SampleCreateSchema.model_validate(new_sample_obj))
+        res.append(SampleCreateSchema(
+            name=f"{sample_req.text_request}",
+            music_id=music_model.id,
+            preset_id=preset_id,
+        ))
 
     return res
 

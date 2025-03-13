@@ -50,7 +50,7 @@ class PresetRepository:
     @classmethod
     async def create_or_get_unsaved(cls, user: UserSchema, new_preset_data: PresetCreateSchema) -> PresetSchema:
         async with async_session_maker() as session:
-            query = select(PresetModel).where("" == PresetModel.name)
+            query = select(PresetModel).where("" == PresetModel.name).where(user.id == PresetModel.user_id)
             res = await session.execute(query)
             preset = res.scalar()
 

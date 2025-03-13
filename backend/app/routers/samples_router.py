@@ -35,6 +35,5 @@ async def update_preset(sample_id: int, sample_update_indo: SampleUpdateConnecti
 
 @router.delete("/{sample_id}")
 async def delete_preset(sample_id: int):
-    await delete_sample_file(sample_id)
     return await SampleRepository.delete(sample_id)
 

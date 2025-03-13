@@ -11,13 +11,9 @@ class SampleSchema(BaseModel):
 
 class SampleCreateSchema(BaseModel):
     name: str
-    music_url: str
+    music_id: int
     preset_id: int
 
-
-class SampleCreateRequestSchema(BaseModel):
-    text_request: str
-    count: int
 
 
 class SampleUpdateConnection(BaseModel):

@@ -1,5 +1,5 @@
 from sqlalchemy import ForeignKey, UniqueConstraint, CheckConstraint
-from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, relationship
+from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, relationship, aliased
 
 
 class CustomBaseModel(DeclarativeBase):
@@ -17,11 +17,6 @@ class PresetModel(CustomBaseModel):
     color: Mapped[str]
 
     samples: Mapped[list['SampleModel']] = relationship(back_populates='preset', lazy='selectin')
-    users_liked: Mapped[list['UserModel']] = relationship(
-        back_populates="favorites_presets",
-        secondary="UsersFavoritesPresets",
-        lazy='selectin'
-    )
 
 
 class SampleModel(CustomBaseModel):
@@ -29,16 +24,33 @@ class SampleModel(CustomBaseModel):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
-    music_url: Mapped[str]
 
     preset_id: Mapped[int] = mapped_column(ForeignKey("Preset.id"))
     preset: Mapped["PresetModel"] = relationship(back_populates="samples")
 
+    music_id: Mapped[int] = mapped_column(ForeignKey("Music.id"))
+    music: Mapped["MusicModel"] = relationship(back_populates="used_by", lazy='selectin')
+
     note_id: Mapped[int] = mapped_column(ForeignKey("Notes.id"), nullable=True)
+
+    @property
+    def music_url(self):
+        return self.music.music_url
 
     __table_args__ = (
         UniqueConstraint('preset_id', 'note_id', name='uniq_notes_for_preset'),
     )
+
+
+class MusicModel(CustomBaseModel):
+    __tablename__ = 'Music'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    music_url: Mapped[str]
+
+    used_by: Mapped[list['SampleModel']] = relationship(back_populates='music', lazy='selectin')
+
+
 
 
 class NoteModel(CustomBaseModel):
@@ -57,18 +69,7 @@ class UserModel(CustomBaseModel):
     password: Mapped[bytes]
 
     presets: Mapped[list["PresetModel"]] = relationship(back_populates="user", lazy='selectin')
-    favorites_presets: Mapped[list["PresetModel"]] = relationship(
-        back_populates="users_liked",
-        secondary="UsersFavoritesPresets",
-        lazy='selectin'
-    )
 
-
-class UsersFavoritesPresets(CustomBaseModel):
-    __tablename__ = 'UsersFavoritesPresets'
-
-    user_id: Mapped[int] = mapped_column(ForeignKey("User.id"), primary_key=True)
-    preset_id: Mapped[int] = mapped_column(ForeignKey("Preset.id"), primary_key=True)
 
 
 class JwtBlackListModel(CustomBaseModel):

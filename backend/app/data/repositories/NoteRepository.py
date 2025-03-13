@@ -32,5 +32,6 @@ class NoteRepository:
                     continue
 
                 new_note = NoteModel(**note)
+
                 session.add(new_note)
                 await session.commit()

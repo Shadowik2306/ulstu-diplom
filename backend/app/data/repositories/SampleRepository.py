@@ -34,8 +34,9 @@ class SampleRepository:
             new_sample = SampleModel(**sample.model_dump())
 
             session.add(new_sample)
+
             await session.commit()
-            return SampleSchema.model_validate(new_sample, from_attributes=True)
+            return await cls.get(new_sample.id)
 
     @classmethod
     async def create_many(cls, samples: list[SampleCreateSchema]) -> list[SampleSchema]:
