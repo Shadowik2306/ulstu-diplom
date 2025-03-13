@@ -2,6 +2,7 @@ from sqlalchemy import select, update, delete
 
 from app.data.database import async_session_maker
 from app.data.models import SampleModel
+from app.data.repositories.MusicRepository import check_music
 from app.data.schemas.SampleSchema import SampleSchema, SampleCreateSchema, SampleUpdateConnection
 
 
@@ -56,10 +57,14 @@ class SampleRepository:
             return await cls.get(sample_id)
 
     @classmethod
+    @check_music()
     async def delete(cls, sample_id: int) -> int:
         async with async_session_maker() as session:
-            query = delete(SampleModel).where(sample_id == SampleModel.id).returning(SampleModel)
-            await session.execute(query)
+            query = select(SampleModel).where(sample_id == SampleModel.id)
+            res = await session.execute(query)
+
+            sample_model = res.scalar()
+            await session.delete(sample_model)
             await session.commit()
 
-            return sample_id
+            return sample_model.id

@@ -81,4 +81,4 @@ async def delete_preset(
         preset_id: int,
         user: UserSchema = Depends(auth.get_current_auth_user),
 ):
-    return await PresetRepository.delete(user, preset_id)
+    return await PresetRepository.remove(user, preset_id)

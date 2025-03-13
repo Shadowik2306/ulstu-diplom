@@ -6,8 +6,7 @@ from pathlib import Path
 
 from sqlalchemy.exc import InvalidRequestError
 
-from app.data.repositories.MusicRepository import MusicRepository
-from app.data.repositories.SampleRepository import SampleRepository
+
 from app.data.schemas.SampleSchema import SampleCreateSchema
 from app.data.schemas.MusicSchema import MusicCreateRequestSchema, MusicCreateSchema
 
@@ -40,6 +39,8 @@ def get_random_file_from_dir(directory_path):
 
 
 async def create_samples(preset_id: int, sample_req: MusicCreateRequestSchema):
+    from app.data.repositories.MusicRepository import MusicRepository
+
     if sample_req.text_request not in generation_dct:
         raise NotImplementedError(f"The sample request {sample_req.text_request} was not found.")
 
@@ -62,9 +63,11 @@ async def create_samples(preset_id: int, sample_req: MusicCreateRequestSchema):
     return res
 
 
-async def delete_sample_file(sample_id: int):
-    sample = await SampleRepository.get(sample_id)
-    os.remove(static_place / sample.music_url)
+async def delete_sample_file(sample_ulr: str):
+    os.remove(static_place / sample_ulr)
+
+
+
 
 
 if __name__ == '__main__':

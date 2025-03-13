@@ -29,11 +29,11 @@ async def get_presets_samples(preset_id: int, connected: bool = False):
 
 
 @router.patch("/{sample_id}")
-async def update_preset(sample_id: int, sample_update_indo: SampleUpdateConnection):
+async def update_sample(sample_id: int, sample_update_indo: SampleUpdateConnection):
     return await SampleRepository.update_note(sample_id, sample_update_indo)
 
 
 @router.delete("/{sample_id}")
-async def delete_preset(sample_id: int):
+async def delete_sample(sample_id: int):
     return await SampleRepository.delete(sample_id)
 

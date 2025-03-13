@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from pathlib import Path
 
+from app.data.repositories.MusicRepository import MusicRepository
 from app.data.repositories.NoteRepository import NoteRepository
 from app.routers.file_router import router as file_router
 from app.routers.preset_router import presets_router, preset_router
@@ -43,6 +44,8 @@ app.include_router(auth_router)
 @app.get("/")
 async def main(request: Request):
     return {"message": "Hello World"}
+
+
 
 
 

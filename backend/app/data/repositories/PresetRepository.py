@@ -8,6 +8,7 @@ from starlette import status
 
 from app.data.database import async_session_maker
 from app.data.models import PresetModel
+from app.data.repositories.MusicRepository import check_music
 from app.data.schemas.PresetSchema import PresetSchema, PresetCreateSchema, PresetsPageSchema, PresetUpdateSchema
 from app.data.schemas.UserSchema import UserSchema
 
@@ -87,7 +88,8 @@ class PresetRepository:
             return PresetSchema.model_validate(preset, from_attributes=True)
 
     @classmethod
-    async def delete(cls, user: UserSchema, preset_id: int) -> PresetSchema:
+    @check_music()
+    async def remove(cls, user: UserSchema, preset_id: int) -> PresetSchema:
         async with async_session_maker() as session:
             query = select(PresetModel).where(preset_id == PresetModel.id)
             res = await session.execute(query)

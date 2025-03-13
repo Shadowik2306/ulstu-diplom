@@ -1,5 +1,5 @@
-from sqlalchemy import ForeignKey, UniqueConstraint, CheckConstraint
-from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, relationship, aliased
+from sqlalchemy import ForeignKey, UniqueConstraint, event
+from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, relationship, Session
 
 
 class CustomBaseModel(DeclarativeBase):
@@ -10,7 +10,7 @@ class PresetModel(CustomBaseModel):
     __tablename__ = "Preset"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("User.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("User.id", ondelete="CASCADE"))
     user: Mapped["UserModel"] = relationship(back_populates="presets")
 
     name: Mapped[str]
@@ -25,10 +25,10 @@ class SampleModel(CustomBaseModel):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
 
-    preset_id: Mapped[int] = mapped_column(ForeignKey("Preset.id"))
+    preset_id: Mapped[int] = mapped_column(ForeignKey("Preset.id", ondelete="CASCADE"))
     preset: Mapped["PresetModel"] = relationship(back_populates="samples")
 
-    music_id: Mapped[int] = mapped_column(ForeignKey("Music.id"))
+    music_id: Mapped[int] = mapped_column(ForeignKey("Music.id", ondelete="CASCADE"))
     music: Mapped["MusicModel"] = relationship(back_populates="used_by", lazy='selectin')
 
     note_id: Mapped[int] = mapped_column(ForeignKey("Notes.id"), nullable=True)
@@ -49,7 +49,6 @@ class MusicModel(CustomBaseModel):
     music_url: Mapped[str]
 
     used_by: Mapped[list['SampleModel']] = relationship(back_populates='music', lazy='selectin')
-
 
 
 
