@@ -47,10 +47,10 @@ class SampleRepository:
         return res
 
     @classmethod
-    async def update_note(cls, sample_id: int, sample_update_indo: SampleUpdateConnection) -> SampleSchema:
+    async def update_note(cls, sample_id: int, sample_update_info: SampleUpdateConnection) -> SampleSchema:
         async with (async_session_maker() as session):
             query = update(SampleModel).where(sample_id == SampleModel.id
-                                              ).values(note_id=sample_update_indo.note_id)
+                                              ).values(note_id=sample_update_info.note_id)
             await session.execute(query)
             await session.commit()
 
