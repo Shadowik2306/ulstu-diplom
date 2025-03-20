@@ -56,6 +56,9 @@ export default {
     if (this.users_created) {
       url = "/presets/users_presets?"
     }
+    if (this.favorites) {
+      url = "/presets/favorites?"
+    }
 
     this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
     this.text_req = this.$route.query.text ? this.$route.query.text : ""
@@ -63,7 +66,7 @@ export default {
     myFetch(url +  new URLSearchParams({
       page: this.page,
       size: 15,
-      text: this.text_req !== "" ? this.text_req : "%",
+      text: this.text_req !== "" ? this.text_req : "",
     }),).then(res => {
       return res.json()
     }).then(presets_page => {

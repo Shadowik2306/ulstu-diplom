@@ -5,9 +5,10 @@ import SearchComponent from "./InputComponent.vue";
 import ButtonComponent from "./ButtonComponent.vue";
 import {myFetch, serverUrl} from "../assets/myFetch.js";
 import TextCloud from "./TextCloud.vue";
+import LikeButton from "./LikeButton.vue";
 
 export default {
-  components: {TextCloud, ButtonComponent, InputComponent: SearchComponent, MusicPlayer, NoteContainer},
+  components: {LikeButton, TextCloud, ButtonComponent, InputComponent: SearchComponent, MusicPlayer, NoteContainer},
   data(){
     return {
       notes_data: [
@@ -24,18 +25,13 @@ export default {
         {id: 11, name: "A#", color: "#53A6FF"},
         {id: 12, name: "B", color: "#CF7BA1"},
       ],
-      music: [
-        {id: 1, name: "Text Size", note_id: null, music_url: "https://assets.codepen.io/4358584/Anitek_-_Komorebi.mp3"},
-        {id: 3, name: "Hello", note_id: null, music_url: "https://files.freemusicarchive.org/storage-freemusicarchive-org/tracks/Poc47WdXrlsjaFHln2AaK9tSHg92VWlNbkTnjy7r.mp3"},
-        {id: 4, name: "Hello World", note_id: null, music_url: "https://files.freemusicarchive.org/storage-freemusicarchive-org/tracks/Poc47WdXrlsjaFHln2AaK9tSHg92VWlNbkTnjy7r.mp3"},
-        {id: 5, name: "Hello World", note_id: null, music_url: "https://files.freemusicarchive.org/storage-freemusicarchive-org/tracks/Poc47WdXrlsjaFHln2AaK9tSHg92VWlNbkTnjy7r.mp3"},
-        {id: 2, name: "Hello World Hello World", note_id: null, music_url: "https://files.freemusicarchive.org/storage-freemusicarchive-org/tracks/Poc47WdXrlsjaFHln2AaK9tSHg92VWlNbkTnjy7r.mp3"},
-      ],
+      music: [],
       request_text: "",
       preset_name: "",
       preset_creator: 0,
       is_loaded: false,
       editable: false,
+      is_liked: false,
     }
   },
   validations: {
@@ -59,8 +55,9 @@ export default {
   },
   watch: {
     preset_name(newVal, oldVal) {
+      if (!this.is_loaded) return;
       if (newVal === "") {
-        if (window.confirm("If you delete full name, wou will delete preset. Are you sure?")) {
+        if (window.confirm("If you delete full name, you will delete preset. Are you sure?")) {
           console.log("Just joking");
 
           myFetch(`/preset/${this.$route.params.id}/`, {
@@ -92,7 +89,6 @@ export default {
         })
       })
       console.log(newVal)
-      console.log(oldVal)
     }
   },
   methods: {
@@ -131,6 +127,14 @@ export default {
         if (this.storage.token_payload) {
           const cur_user = JSON.parse(this.storage.token_payload).sub
           this.editable = cur_user === preset.user_id
+
+          myFetch(`/preset/${this.$route.params.id}/like`, {}
+          ).then(response => response.json()
+          ).then(data => {
+            console.log(data)
+            this.is_liked = data
+          })
+
         }
 
         for (let sample of preset.samples) {
@@ -203,6 +207,13 @@ export default {
         console.warn(error)
       })
     },
+    like_preset() {
+      this.is_liked = !this.is_liked
+      myFetch(`/preset/${this.$route.params.id}/like`, {
+        method: 'PATCH',
+      }).then(response => response.json()
+      ).then(data => {})
+    }
   },
   created() {
     this.get_preset()
@@ -223,12 +234,20 @@ export default {
                         v-model="request_text"
                         @keyup.enter="this.create_samples"
         />
+        <LikeButton
+            :initial_liked="this.is_liked"
+            @like="like_preset"
+        />
+
       </div>
       <div v-else class="preset-name">
         <TextCloud :text="this.preset_name"></TextCloud>
       </div>
       <div class="generate-button-container" v-if="editable">
         <ButtonComponent label="Generate" class="button" @click="this.create_samples"/>
+      </div>
+      <div>
+
       </div>
     </div>
     <div v-if="editable" class="constructor-area">
@@ -282,6 +301,7 @@ export default {
   display: flex;
   width: 100%;
   justify-content: space-between;
+  gap: 1vh;
 }
 
 .name-and-search .search {
