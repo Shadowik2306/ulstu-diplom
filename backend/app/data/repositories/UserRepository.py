@@ -14,7 +14,7 @@ class UserRepository:
             session.add(user)
             await session.flush()
             await session.commit()
-            return user.id
+            return UserSchema.model_validate(user, from_attributes=True)
 
     @classmethod
     async def get_by_email(cls, email):

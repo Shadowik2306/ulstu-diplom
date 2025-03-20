@@ -24,8 +24,13 @@ def create_user(
 async def sign_up(
         user: UserAddSchema = Depends(create_user)
 ):
-    res = await UserRepository.add_one(user)
-    return res
+    user = await UserRepository.add_one(user)
+    jwt_payload = TokenPayload(**user.model_dump()).model_dump()
+    token = auth.encode_jwt(jwt_payload)
+    return TokenSchema(
+        access_token=token,
+        token_type="Bearer",
+    )
 
 
 async def validate_auth_user(
