@@ -13,20 +13,33 @@ presets_router = APIRouter(
 
 @presets_router.get("/")
 async def get_all_presets(
-        page: int = Query(ge=1, default=0),
+        page: int = Query(ge=1, default=1),
         size: int = Query(ge=1, le=100, default=100),
+        text: str = "%",
 ) -> PresetsPageSchema:
-    res = await PresetRepository.get_all(page - 1, size)
+    res = await PresetRepository.get_all(page - 1, size, text=text)
     return res
 
 
 @presets_router.get("/users_presets")
 async def get_users_presets(
         user: UserSchema = Depends(auth.get_current_auth_user),
-        page: int = Query(ge=1, default=0),
+        page: int = Query(ge=1, default=1),
         size: int = Query(ge=1, le=100, default=100),
+        text: str = "",
 ) -> PresetsPageSchema:
-    res = await PresetRepository.get_all(page - 1, size, show_unsaved=True, user_id=user.id)
+    res = await PresetRepository.get_all(page - 1, size, show_unsaved=True, user_id=user.id, text=text)
+    return res
+
+
+@presets_router.get("/favorites")
+async def get_user_favorites(
+        user: UserSchema = Depends(auth.get_current_auth_user),
+        page: int = Query(ge=1, default=1),
+        size: int = Query(ge=1, le=100, default=100),
+        text: str = "",
+):
+    res = await PresetRepository.get_favorites(user, page, size, text)
     return res
 
 
@@ -74,6 +87,24 @@ async def update_preset(
         user: UserSchema = Depends(auth.get_current_auth_user),
 ):
     return await PresetRepository.update(user, preset_id, preset_update_info)
+
+
+@preset_router.get("/like")
+async def get_liked_preset(
+        preset_id: int,
+        user: UserSchema = Depends(auth.get_current_auth_user),
+):
+    res = await PresetRepository.is_user_favorite(user, preset_id)
+    return res
+
+
+@preset_router.patch("/like")
+async def set_liked_preset(
+        preset_id: int,
+        user: UserSchema = Depends(auth.get_current_auth_user),
+):
+    res = await PresetRepository.xor_favorites(user, preset_id)
+    return res
 
 
 @preset_router.delete("/")

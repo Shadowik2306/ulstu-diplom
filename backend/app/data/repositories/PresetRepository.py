@@ -2,12 +2,12 @@ import math
 from http import HTTPStatus
 
 from fastapi import HTTPException
-from sqlalchemy import select, func
+from sqlalchemy import select, func, and_
 from sqlalchemy.orm import session
 from starlette import status
 
 from app.data.database import async_session_maker
-from app.data.models import PresetModel
+from app.data.models import PresetModel, UserModel, UserFavorites
 from app.data.repositories.MusicRepository import check_music
 from app.data.schemas.PresetSchema import PresetSchema, PresetCreateSchema, PresetsPageSchema, PresetUpdateSchema
 from app.data.schemas.UserSchema import UserSchema
@@ -24,16 +24,28 @@ class PresetRepository:
             return PresetSchema.model_validate(preset_model, from_attributes=True)
 
     @classmethod
-    async def get_all(cls, page, size, show_unsaved=False, **kwargs) -> PresetsPageSchema:
+    async def get_all(
+            cls,
+            page,
+            size,
+            show_unsaved=False,
+            text="",
+            **kwargs
+    ) -> PresetsPageSchema:
         async with (async_session_maker() as session):
-            query = select(func.count()).select_from(PresetModel).filter_by(**kwargs)
+            query = select(func.count()).select_from(PresetModel).where(
+                func.upper(PresetModel.name).like(f'%{text.upper()}%')
+            ).filter_by(**kwargs)
             if not show_unsaved:
                 query = query.filter(PresetModel.name != '')
 
             res = await session.execute(query)
             total_pages = math.ceil(res.scalar() / size)
 
-            query = select(PresetModel).filter_by(**kwargs).limit(size).offset(page * size)
+            query = select(PresetModel).where(
+                func.upper(PresetModel.name).like(f'%{text.upper()}%')
+            ).filter_by(**kwargs).limit(size).offset(page * size)
+
             if not show_unsaved:
                 query = query.filter(PresetModel.name != '')
             res = await session.execute(query)
@@ -47,6 +59,57 @@ class PresetRepository:
             })
 
             return presets_page
+
+
+    @classmethod
+    async def get_favorites(cls, user: UserSchema, page, size, text="") -> PresetsPageSchema:
+        async with async_session_maker() as session:
+
+            query = select(UserModel).where(user.id == UserModel.id)
+            res = await session.execute(query)
+
+            user_model: UserModel = res.scalar()
+            if text:
+                data = [preset for preset in user_model.favorites if text.upper() in preset.name.upper()]
+            else:
+                data = user_model.favorites
+
+            return PresetsPageSchema.model_validate({
+                "presets":
+                    [PresetSchema.model_validate(preset, from_attributes=True) for preset in data][size * (page - 1):size * (page - 1) + size],
+                "page": page,
+                "size": size,
+                "total_pages": len(data),
+            })
+
+    @classmethod
+    async def is_user_favorite(cls, user: UserSchema, preset_id: int) -> bool:
+        async with async_session_maker() as session:
+            query = select(UserFavorites).where(
+                and_(UserFavorites.user_id == user.id, UserFavorites.preset_id == preset_id)
+            )
+            res = await session.execute(query)
+            obj = res.scalar()
+
+            return obj is not None
+
+    @classmethod
+    async def xor_favorites(cls, user: UserSchema, preset_id: int):
+        async with async_session_maker() as session:
+            query = select(UserFavorites).where(
+                and_(UserFavorites.user_id == user.id, UserFavorites.preset_id == preset_id)
+            )
+            res = await session.execute(query)
+            obj = res.scalar()
+
+            if obj:
+                await session.delete(obj)
+            else:
+                new_obj = UserFavorites(user_id=user.id, preset_id=preset_id)
+                session.add(new_obj)
+
+            await session.commit()
+            return
 
     @classmethod
     async def create_or_get_unsaved(cls, user: UserSchema, new_preset_data: PresetCreateSchema) -> PresetSchema:

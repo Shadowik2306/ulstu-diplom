@@ -1,9 +1,11 @@
 <script>
 import SampleCreator from "./components/SampleCreator.vue";
 import VerticalNavbar from "./components/VericalNavbar.vue";
+import LikeButton from "./components/LikeButton.vue";
 
 export default {
   components: {
+    LikeButton,
     VerticalNavbar,
     SampleCreator,
   },

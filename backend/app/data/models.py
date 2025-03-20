@@ -68,7 +68,14 @@ class UserModel(CustomBaseModel):
     password: Mapped[bytes]
 
     presets: Mapped[list["PresetModel"]] = relationship(back_populates="user", lazy='selectin')
+    favorites: Mapped[list["PresetModel"]] = relationship(secondary='UserFavorites', lazy='selectin')
 
+
+class UserFavorites(CustomBaseModel):
+    __tablename__ = 'UserFavorites'
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("User.id"), primary_key=True)
+    preset_id: Mapped[int] = mapped_column(ForeignKey("Preset.id"), primary_key=True)
 
 
 class JwtBlackListModel(CustomBaseModel):
