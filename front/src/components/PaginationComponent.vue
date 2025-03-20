@@ -30,6 +30,7 @@ export default {
       default: "/presets",
     }
   },
+  emits: ["prevPage", "nextPage", "changePage"],
   computed: {
     pages_buttons() {
       let start = Math.max(this.currentPage - 2, 1)
@@ -52,19 +53,13 @@ export default {
   },
   methods: {
     prevPage() {
-      window.location.href = this.url + "?" + new URLSearchParams({
-        page: this.currentPage - 1
-      })
+      this.$emit("prevPage")
     },
     nextPage() {
-      window.location.href = this.url + "?" + new URLSearchParams({
-        page: this.currentPage + 1
-      })
+      this.$emit("nextPage")
     },
     goToPage(page) {
-      window.location.href = this.url + "?" + new URLSearchParams({
-        page: page
-      })
+      this.$emit("changePage", page)
     },
   },
 };

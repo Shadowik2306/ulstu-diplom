@@ -39,7 +39,11 @@ export default {
       ).then(response => {
         return response.json();
       }).then(data => {
-        console.log(data)
+        const raw_token = data.access_token
+        this.storage.token = raw_token;
+        this.storage.token_header = window.atob(raw_token.split('.')[0]);
+        this.storage.token_payload = window.atob(raw_token.split('.')[1]);
+        window.location.href = "/"
       })
     },
   },

@@ -25,6 +25,26 @@ export default {
       page: 0
     }
   },
+  methods: {
+    redirect() {
+      window.location.href = this.$route.path + "?" + new URLSearchParams({
+        text: this.text_req,
+        page: this.page
+      })
+    },
+    prevPage() {
+      this.page = Math.max(this.page - 1, 1);
+      this.redirect()
+    },
+    nextPage() {
+      this.page = Math.min(this.page + 1, this.totalPages);
+      this.redirect()
+    },
+    goToPage(page) {
+      this.page = page;
+      this.redirect()
+    },
+  },
   created() {
     if (this.users_created || this.favorites) {
       if (!this.storage.token_payload) {
@@ -38,10 +58,12 @@ export default {
     }
 
     this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
+    this.text_req = this.$route.query.text ? this.$route.query.text : ""
 
     myFetch(url +  new URLSearchParams({
       page: this.page,
       size: 15,
+      text: this.text_req !== "" ? this.text_req : "%",
     }),).then(res => {
       return res.json()
     }).then(presets_page => {
@@ -55,7 +77,7 @@ export default {
 
 <template>
 <div class="main-container">
-  <SearchComponent :model-value="this.text_req" placeholder="Search" />
+  <SearchComponent v-model="this.text_req" placeholder="Search" @keydown.enter="redirect" />
   <div class="preset-container">
     <TextCloud v-for="preset in this.presets"
                :text="preset.name === '' ? 'UNSAVED' : preset.name"
@@ -67,6 +89,9 @@ export default {
       :current-page="this.page"
       :total-pages="this.totalPages"
       :url="$route.path"
+      @next-page="nextPage"
+      @prev-page="prevPage"
+      @change-page="goToPage"
   />
 </div>
 </template>

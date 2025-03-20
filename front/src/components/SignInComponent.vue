@@ -34,12 +34,18 @@ export default {
             })
           }
       ).then(response => {
-        return response.json();
+        if (response.ok) {
+          return response.json();
+        }
+        return Promise.reject(response.json());
       }).then(data => {
         const raw_token = data.access_token
         this.storage.token = raw_token;
         this.storage.token_header = window.atob(raw_token.split('.')[0]);
         this.storage.token_payload = window.atob(raw_token.split('.')[1]);
+        window.location.href = "/"
+      }).catch(data => {
+        console.log(data);
       })
     },
   },
