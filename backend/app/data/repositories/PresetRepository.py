@@ -52,14 +52,14 @@ class PresetRepository:
             presets_models = res.scalars().all()
 
             presets_page = PresetsPageSchema.model_validate({
-                "presets": [PresetSchema.model_validate(preset_model, from_attributes=True) for preset_model in presets_models],
+                "presets": [PresetSchema.model_validate(preset_model, from_attributes=True) for preset_model in
+                            presets_models],
                 "page": page,
                 "size": size,
                 "total_pages": total_pages,
             })
 
             return presets_page
-
 
     @classmethod
     async def get_favorites(cls, user: UserSchema, page, size, text="") -> PresetsPageSchema:
@@ -76,7 +76,8 @@ class PresetRepository:
 
             return PresetsPageSchema.model_validate({
                 "presets":
-                    [PresetSchema.model_validate(preset, from_attributes=True) for preset in data][size * (page - 1):size * (page - 1) + size],
+                    [PresetSchema.model_validate(preset, from_attributes=True) for preset in data][
+                    size * (page - 1):size * (page - 1) + size],
                 "page": page,
                 "size": size,
                 "total_pages": len(data),
@@ -143,6 +144,24 @@ class PresetRepository:
             return [PresetSchema.model_validate(preset, from_attributes=True) for preset in last_presets]
 
     @classmethod
+    async def get_most_liked_presets(cls) -> list[PresetSchema]:
+        async with (async_session_maker() as session):
+            query = select(
+                PresetModel, func.count(UserFavorites.user_id)
+            ).join(
+                UserFavorites, PresetModel.id == UserFavorites.preset_id, isouter=True
+            ).group_by(
+                PresetModel.id
+            ).order_by(
+                func.count(UserFavorites.user_id).desc()
+            ).limit(9)
+
+            res = await session.execute(query)
+            most_liked_presets = res.scalars().all()
+
+            return [PresetSchema.model_validate(preset, from_attributes=True) for preset in most_liked_presets]
+
+    @classmethod
     async def update(cls, user: UserSchema, preset_id: int, new_preset: PresetUpdateSchema) -> PresetSchema:
         async with async_session_maker() as session:
             query = select(PresetModel).where(preset_id == PresetModel.id)
@@ -159,8 +178,6 @@ class PresetRepository:
             await session.commit()
 
             return PresetSchema.model_validate(preset, from_attributes=True)
-
-
 
     @classmethod
     @check_music()

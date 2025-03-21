@@ -13,14 +13,18 @@ export default defineComponent({
     }
   },
   created() {
-    let url = "/presets/last"
-
     this.page = 1
 
-    myFetch(url).then(res => {
+    myFetch('/presets/last').then(res => {
       return res.json()
     }).then(presets_page => {
       this.last_created = presets_page.slice(0, 10)
+    })
+
+    myFetch('/presets/most_liked').then(res => {
+      return res.json()
+    }).then(presets_page => {
+      this.most_liked = presets_page.slice(0, 10)
     })
   }
 })

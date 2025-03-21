@@ -8,7 +8,7 @@ from app.utils.music_generaion import delete_sample_file
 
 engine = create_async_engine(
     db_settings.database_url,
-    # echo=True
+    echo=True
 )
 
 

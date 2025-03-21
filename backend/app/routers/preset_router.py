@@ -49,6 +49,12 @@ async def get_last_presets():
     return res
 
 
+@presets_router.get("/most_liked")
+async def get_most_liked_presets():
+    res = await PresetRepository.get_most_liked_presets()
+    return res
+
+
 @presets_router.post("/")
 async def create_preset(
         user: UserSchema = Depends(auth.get_current_auth_user),
