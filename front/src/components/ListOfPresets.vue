@@ -103,6 +103,7 @@ export default {
 .main-container {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 3vh;
   height: 95vh;
 }

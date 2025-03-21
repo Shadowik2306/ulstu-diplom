@@ -8,7 +8,7 @@
     </div>
     <ul>
       <li v-for="item in navItems" :key="item.name" @click="item.action(item.params)"
-          :class="{active: item.path === currentRouteName}">
+          :class="{active: item.url_name === currentRouteName}">
         {{ item.name }}
       </li>
     </ul>
@@ -48,7 +48,7 @@ export default {
   },
   computed: {
     currentRouteName() {
-      return this.$route.path;
+      return this.$route.name;
     },
     user_info() {
       if (!this.storage.token_payload) {
@@ -67,12 +67,12 @@ export default {
   data() {
     return {
       public_nav_items: [
-        { name: 'All Presets', action: this.navigate, params: ('/presets') },
+        { name: 'All Presets', action: this.navigate, params: ('/presets'), url_name: "presets" },
       ],
       private_nav_items: [
-        {name: "New Preset", action: this.create_new_preset},
-        {name: "My Presets", action: this.navigate, params: ('/my_presets')},
-        {name: "Favorites", action: this.navigate, params: ("/favorites"),},
+        {name: "New Preset", action: this.create_new_preset, url_name: "preset"},
+        {name: "My Presets", action: this.navigate, params: ('/my_presets'), url_name: "my_presets"},
+        {name: "Favorites", action: this.navigate, params: ("/favorites"), url_name: "favorites" },
       ]
     };
   },

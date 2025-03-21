@@ -8,17 +8,18 @@ import SignInComponent from "./components/SignInComponent.vue";
 import SignUpComponent from "./components/SignUpComponent.vue";
 import ReactiveStorage from "vue-reactive-localstorage";
 import "@fortawesome/fontawesome-free/css/all.css";
+import MainPage from "./components/MainPage.vue";
 
 
 
 const routes = [
-    { path: '/'},
-    { path: '/preset/:id', component: SampleCreator},
-    { path: '/presets', component: ListOfPresets},
-    { path: '/my_presets', component: ListOfPresets, props: {users_created: true}},
-    { path: '/favorites', component: ListOfPresets, props: {favorites: true}},
-    { path: '/sign_in', component: SignInComponent},
-    { path: '/sign_up', component: SignUpComponent},
+    { path: '/', component: MainPage, name: "MainPage" },
+    { path: '/preset/:id', component: SampleCreator, name: 'sample_creator' },
+    { path: '/presets', component: ListOfPresets, name: 'presets'},
+    { path: '/my_presets', component: ListOfPresets, props: {users_created: true}, name: 'my_presets'},
+    { path: '/favorites', component: ListOfPresets, props: {favorites: true}, name: 'favorites'},
+    { path: '/sign_in', component: SignInComponent, name: 'sign_in' },
+    { path: '/sign_up', component: SignUpComponent, name: 'sign_up' },
 ]
 
 const router = createRouter({

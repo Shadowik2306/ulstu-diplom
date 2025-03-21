@@ -133,6 +133,16 @@ class PresetRepository:
             return PresetSchema.model_validate(new_preset, from_attributes=True)
 
     @classmethod
+    async def get_last_presets(cls) -> list[PresetSchema]:
+        async with async_session_maker() as session:
+            query = select(PresetModel).order_by(PresetModel.created_at).limit(9)
+            res = await session.execute(query)
+
+            last_presets = res.scalars().all()
+
+            return [PresetSchema.model_validate(preset, from_attributes=True) for preset in last_presets]
+
+    @classmethod
     async def update(cls, user: UserSchema, preset_id: int, new_preset: PresetUpdateSchema) -> PresetSchema:
         async with async_session_maker() as session:
             query = select(PresetModel).where(preset_id == PresetModel.id)
@@ -149,6 +159,8 @@ class PresetRepository:
             await session.commit()
 
             return PresetSchema.model_validate(preset, from_attributes=True)
+
+
 
     @classmethod
     @check_music()

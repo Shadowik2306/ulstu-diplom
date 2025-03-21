@@ -1,4 +1,6 @@
-from sqlalchemy import ForeignKey, UniqueConstraint, event
+import datetime
+
+from sqlalchemy import ForeignKey, UniqueConstraint, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, relationship, Session
 
 
@@ -15,6 +17,8 @@ class PresetModel(CustomBaseModel):
 
     name: Mapped[str]
     color: Mapped[str]
+
+    created_at: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now)
 
     samples: Mapped[list['SampleModel']] = relationship(back_populates='preset', lazy='selectin')
 

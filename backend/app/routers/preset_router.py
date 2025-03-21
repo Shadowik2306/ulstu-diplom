@@ -43,6 +43,12 @@ async def get_user_favorites(
     return res
 
 
+@presets_router.get("/last")
+async def get_last_presets():
+    res = await PresetRepository.get_last_presets()
+    return res
+
+
 @presets_router.post("/")
 async def create_preset(
         user: UserSchema = Depends(auth.get_current_auth_user),
