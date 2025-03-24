@@ -1,3 +1,7 @@
+import wave
+from array import array
+
+import numpy as np
 from diffusers import AudioLDM2Pipeline
 import scipy
 import torch
@@ -13,8 +17,9 @@ class AudioLDM2Generator:
         for i in range(num_samples):
             result = self.pipeline(
                 prompt=prompt,
-                audio_length_in_s=10.0,
-                num_inference_steps=100
+                audio_length_in_s=5.0,
+                num_inference_steps=50,
+
             ).audios[0]
 
             rate = 16000
@@ -22,7 +27,6 @@ class AudioLDM2Generator:
 
             scipy.io.wavfile.write(output_file, rate, data=result)
 
-
 if __name__ == "__main__":
     ldm_model = AudioLDM2Generator()
-    ldm_model.generate_audio("Romantic loft")
+    ldm_model.generate_audio("City sound")
