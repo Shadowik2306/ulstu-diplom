@@ -1,17 +1,23 @@
+import pickle
 from pydantic import BaseModel
+
+
+class SampleSchemaServer(BaseModel):
+    id: int
+    preset_id: int
+    note_id: int
+    music_url: str
 
 
 class SampleSchema(BaseModel):
     id: int
-    music_url: str
     preset_id: int
     note_id: int
+    data: bytes
 
-
-class SampleCreateSchema(BaseModel):
-    music_url: str
-    preset_id: int
-
+    @property
+    def data_list(self):
+        return pickle.loads(self.data)
 
 
 

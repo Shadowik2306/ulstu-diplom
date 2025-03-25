@@ -8,6 +8,8 @@ from app.utils.Music.PresetHost import PresetHost
 from app.views.MainWindow.MainWindow import MainWindow
 from threading import Thread
 
+from app.utils.Music.SoundEngine import SoundEngine
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
@@ -15,11 +17,15 @@ if __name__ == '__main__':
     widget.show()
 
     PresetHost()
-    midi_host = MidiHost()
 
     NoteRepository.initialize_table()
 
-    thread = Thread(target=midi_host.listen_for_midi)
-    thread.start()
+    midi_host = MidiHost()
+    midi_host_thread = Thread(target=midi_host.listen_for_midi)
+    midi_host_thread.start()
+
+    sound_engine = SoundEngine()
+    sound_engine_thread = Thread(target=sound_engine.main_cycle)
+    sound_engine_thread.start()
 
     sys.exit(app.exec())

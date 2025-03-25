@@ -89,6 +89,7 @@ class SoundEngine:
             res += self.samples[id_object][cur_id % size]
             self.dict[sample_keys][1] += 1
 
+        print(res)
         outdata[:frames] = res[:, np.newaxis]
 
 
@@ -110,7 +111,7 @@ print(audio_signal)
 se = SoundEngine()
 
 se.add_sample('test1.wav')
-se.add_sample('test2.wav')
+# se.add_sample('test2.wav')
 se.main_cycle()
 
 

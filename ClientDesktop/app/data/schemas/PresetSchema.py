@@ -6,7 +6,7 @@ from app.data.schemas.SampleSchema import SampleSchema
 class PresetSchema(BaseModel):
     id: int
     name: str
-    samples: list["SampleSchema"]
+    # samples: list["SampleSchema"]
 
 
 class PresetSchemaSync(BaseModel):

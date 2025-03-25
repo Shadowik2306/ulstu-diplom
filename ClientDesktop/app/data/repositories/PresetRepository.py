@@ -36,7 +36,7 @@ class PresetRepository:
         if response.status_code != 200:
             raise Exception("Something went wrong")
 
-        global_presets = [PresetSchemaSync.model_validate(preset) for preset in response.json()]
+        global_presets = [PresetSchemaSync.model_validate(preset) for preset in response.json()['presets']]
 
         with session_maker() as session:
             query = delete(PresetModel).filter(PresetModel.id.notin_([preset.id for preset in global_presets]))
