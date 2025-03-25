@@ -8,6 +8,17 @@ from app.utils.Music.PresetHost import PresetHost
 from app.views.MainWindow.ui_MainWindow import Ui_MainWindow
 from app.views.DeviceWidget.DeviceWidget import DeviceWidget
 
+keyboard_to_midi = {
+    Qt.Key.Key_A: 60,  # C4
+    Qt.Key.Key_S: 62,  # D4
+    Qt.Key.Key_D: 64,  # E4
+    Qt.Key.Key_F: 65,  # F4
+    Qt.Key.Key_G: 67,  # G4
+    Qt.Key.Key_H: 69,  # A4
+    Qt.Key.Key_J: 71,  # B4
+    Qt.Key.Key_K: 72,  # C5
+    Qt.Key.Key_L: 74   # D5
+}
 
 class MainWindow(QWidget):
     def __init__(self, parent=None):
@@ -74,24 +85,28 @@ class MainWindow(QWidget):
         if not self.computer_keyboard_active:
             return
 
-        keyboard_to_midi = {
-            Qt.Key.Key_A: 60,  # C4
-            Qt.Key.Key_S: 62,  # D4
-            Qt.Key.Key_D: 64,  # E4
-            Qt.Key.Key_F: 65,  # F4
-            Qt.Key.Key_G: 67,  # G4
-            Qt.Key.Key_H: 69,  # A4
-            Qt.Key.Key_J: 71,  # B4
-            Qt.Key.Key_K: 72,  # C5
-            Qt.Key.Key_L: 74   # D5
-        }
+        if event.isAutoRepeat():
+            return
 
+        print(event)
         if event.key() in keyboard_to_midi:
-            ComputerKeyboard.event(keyboard_to_midi[event.key()])
-            print(keyboard_to_midi[event.key()])
+            ComputerKeyboard.play_event(keyboard_to_midi[event.key()])
             return
 
         super().keyPressEvent(event)
+
+    def keyReleaseEvent(self, event):
+        if not self.computer_keyboard_active:
+            return
+
+        if event.isAutoRepeat():
+            return
+
+        if event.key() in keyboard_to_midi:
+            ComputerKeyboard.stop_event(keyboard_to_midi[event.key()])
+            return
+
+        super().keyReleaseEvent(event)
 
     def focusOutEvent(self, event):
         super().focusOutEvent(event)

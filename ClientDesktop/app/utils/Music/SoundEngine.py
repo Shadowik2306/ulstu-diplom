@@ -35,6 +35,14 @@ class SoundEngine:
         self.dict[(midi_channel_id, channel)] = [len(self.samples), 0, len(data)]
         self.samples.append(data)
 
+    def delete_sample(self, midi_channel_id, channel):
+        if (midi_channel_id, channel) not in self.dict:
+            print(f"Midi channel with id {midi_channel_id} does not exist")
+        id_object = self.dict[(midi_channel_id, channel)][0]
+        # TODO Find better way to save data
+        # del self.samples[id_object]
+        del self.dict[(midi_channel_id, channel)]
+
     def __callback(self, outdata, frames, time, status):
         if status:
             print(status)
@@ -47,7 +55,8 @@ class SoundEngine:
 
             if cur_id >= size:
                 del self.dict[sample_keys]
-                del self.samples[id_object]
+                # TODO Find better way to save data
+                # del self.samples[id_object]
                 continue
 
             res += self.samples[id_object][cur_id % size] * volume

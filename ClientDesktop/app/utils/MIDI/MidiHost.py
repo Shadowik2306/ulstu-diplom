@@ -19,7 +19,7 @@ class MidiListener(threading.Thread):
                 for message in inport.iter_pending():
                     if message.type == 'note_on':
                         for subscriber in self.subscribers:
-                            subscriber.subscribe_action(message.note)
+                            subscriber.subscribe_play_action(message.note)
 
     def stop(self):
         """Stop the MIDI listener's thread."""

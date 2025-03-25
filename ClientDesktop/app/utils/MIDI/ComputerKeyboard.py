@@ -11,6 +11,11 @@ class ComputerKeyboard:
         cls.subscribers.remove(subscriber)
 
     @classmethod
-    def event(cls, num):
+    def play_event(cls, num):
         for subscriber in cls.subscribers:
-            subscriber.subscribe_action(num)
+            subscriber.subscribe_play_action(num)
+
+    @classmethod
+    def stop_event(cls, num):
+        for subscriber in cls.subscribers:
+            subscriber.subscribe_stop_action(num)

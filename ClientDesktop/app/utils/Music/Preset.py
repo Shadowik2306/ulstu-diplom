@@ -26,7 +26,12 @@ class Preset:
         note_convert = note % 12 + 1
         if self.samples[note_convert] is None:
             return
+        print(1, midi_channel_id, note)
         self.sound_engine.add_sample(self.samples[note_convert], midi_channel_id, note)
+
+    def stop_note(self, midi_channel_id, note: int):
+        print(2, midi_channel_id, note)
+        self.sound_engine.delete_sample(midi_channel_id, note)
 
     def update(self):
         SampleRepository.synchronize(self.preset_id)

@@ -126,10 +126,15 @@ class DeviceWidget(QWidget):
         self.current_subscription = self.midihost.active_listeners[selected_item]
         self.current_subscription.add_subscriber(self)
 
-    def subscribe_action(self, num):
+    def subscribe_play_action(self, num):
         if not self.sample_name or not self.is_enabled:
             return
         self.sample_host.presets[self.sample_name].play_note(self.id, num)
+
+    def subscribe_stop_action(self, num):
+        if not self.sample_name or not self.is_enabled:
+            return
+        self.sample_host.presets[self.sample_name].stop_note(self.id, num)
 
     def midihost_check(self):
         new_devices = list(self.midihost.active_listeners.keys())
