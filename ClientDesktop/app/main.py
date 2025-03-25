@@ -8,7 +8,7 @@ from app.utils.Music.PresetHost import PresetHost
 from app.views.MainWindow.MainWindow import MainWindow
 from threading import Thread
 
-from app.utils.Music.SoundEngine import SoundEngine
+from app.utils.Music.SoundEngine import sound_engine_singleton_factory
 
 
 if __name__ == '__main__':
@@ -24,7 +24,7 @@ if __name__ == '__main__':
     midi_host_thread = Thread(target=midi_host.listen_for_midi)
     midi_host_thread.start()
 
-    sound_engine = SoundEngine()
+    sound_engine = sound_engine_singleton_factory()
     sound_engine_thread = Thread(target=sound_engine.main_cycle)
     sound_engine_thread.start()
 

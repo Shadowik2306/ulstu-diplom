@@ -6,11 +6,11 @@ import numpy as np
 import pygame
 
 from app.data.repositories.SampleRepository import SampleRepository
-from app.utils.Music.SoundEngine import SoundEngine
+from app.utils.Music.SoundEngine import sound_engine_singleton_factory
 
 STATIC_PATH = Path(__file__).parent.parent.parent.parent / 'static'
 
-i = 0
+
 class Preset:
     def __init__(
         self,
@@ -19,22 +19,14 @@ class Preset:
         pygame.mixer.init()
         self.preset_id = preset_id
         self.samples = {}
-        self.sound_engine = SoundEngine()
+        self.sound_engine = sound_engine_singleton_factory()
         self.update()
-        self.i = 0
 
-    def play_note(self, note: int, volume: float):
-        if self.samples[note] is None:
+    def play_note(self, midi_channel_id, note: int):
+        note_convert = note % 12 + 1
+        if self.samples[note_convert] is None:
             return
-        # sound_file = self.samples[note]
-        # sound_file.set_volume(volume)
-        # sound_file.play()
-        self.i += 1
-        self.sound_engine.add_sample(self.samples[note], self.i)
-
-
-    def download_music_file(self, music_path: Path):
-        pass
+        self.sound_engine.add_sample(self.samples[note_convert], midi_channel_id, note)
 
     def update(self):
         SampleRepository.synchronize(self.preset_id)

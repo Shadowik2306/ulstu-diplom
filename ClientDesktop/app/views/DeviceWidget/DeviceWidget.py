@@ -6,12 +6,14 @@ from PySide6.QtWidgets import QApplication, QWidget
 from app.utils.MIDI.ComputerKeyboard import ComputerKeyboard
 from app.utils.MIDI.MidiHost import MidiHost
 from app.utils.Music.PresetHost import PresetHost
+from app.utils.Music.SoundEngine import sound_engine_singleton_factory
 from app.views.DeviceWidget.ui_DeviceWidget import Ui_DeviceWidget
 
 
 class DeviceWidget(QWidget):
     def __init__(
             self,
+            device_id,
             name=None,
             parent=None
     ):
@@ -19,6 +21,13 @@ class DeviceWidget(QWidget):
         self.ui = Ui_DeviceWidget()
         self.ui.setupUi(self)
         self.setWindowTitle("")
+
+        self.id = device_id
+
+        self.sound_engine = sound_engine_singleton_factory()
+        self.sound_engine.add_midi_channel_configuration(
+            midi_id=self.id, volume=self.ui.VolumeSlider.value()
+        )
 
         self.is_muted = False
         self.is_enabled = False
@@ -42,6 +51,8 @@ class DeviceWidget(QWidget):
 
         self.ui.DevicesBox.currentIndexChanged.connect(self.new_device_chosen)
 
+        self.ui.VolumeSlider.valueChanged.connect(self.volume_changed)
+
         self.midihost = MidiHost()
         self.timer = QTimer()
         self.timer.timeout.connect(self.midihost_check)
@@ -53,6 +64,13 @@ class DeviceWidget(QWidget):
 
     def widget_deselect(self):
         self.ui.border.setStyleSheet("background-color: rgb(125, 128, 128)")
+
+    def volume_changed(self):
+        print(self.ui.VolumeSlider.value())
+        self.sound_engine.change_midi_channel_volume(
+            midi_id=self.id,
+            volume=self.ui.VolumeSlider.value()
+        )
 
     def mute_clicked(self):
         if not self.is_muted:
@@ -111,8 +129,7 @@ class DeviceWidget(QWidget):
     def subscribe_action(self, num):
         if not self.sample_name or not self.is_enabled:
             return
-        volume = self.ui.VolumeSlider.value() / 100 if not self.is_muted else 0
-        self.sample_host.presets[self.sample_name].play_note(num % 12 + 1, volume)
+        self.sample_host.presets[self.sample_name].play_note(self.id, num)
 
     def midihost_check(self):
         new_devices = list(self.midihost.active_listeners.keys())

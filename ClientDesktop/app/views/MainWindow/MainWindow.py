@@ -24,10 +24,12 @@ class MainWindow(QWidget):
         self.ui.addPresetButton.clicked.connect(self.update_button)
 
         midi_1 = DeviceWidget(
+            device_id=0,
             name="MIDI 1",
         )
 
         midi_2 = DeviceWidget(
+            device_id=1,
             name="MIDI 2",
         )
 

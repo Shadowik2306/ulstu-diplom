@@ -1,97 +1,70 @@
+from dataclasses import dataclass
+
 import numpy as np
 import sounddevice as sd
-import soundfile as sf
-from scipy.fft import rfft, rfftfreq
 
-
-# def process_chunk(chunk, sample_rate):
-#     # Example of frequency processing for each chunk
-#     freqs = rfftfreq(len(chunk), d=1 / sample_rate)
-#     fft_magnitudes = np.abs(rfft(chunk))
-#
-#     # Display top frequencies for the current chunk
-#     if fft_magnitudes.size > 0:
-#         top_indices = fft_magnitudes.argsort()[-3:][::-1]  # Top 3 magnitudes
-#         top_frequencies = freqs[top_indices]
-#         print(f"Top Frequencies: {top_frequencies}")
-#     else:
-#         top_frequencies = []
-#
-#     return chunk
-#
-#
-# def play_audio_with_overlap(filename, chunk_size=1024, overlap=512):
-#     # Open audio file
-#     with sf.SoundFile(filename, 'r') as file:
-#         sample_rate = file.samplerate
-#         print(f"Sample rate: {sample_rate}, Channels: {file.channels}")
-#
-#         # Initial read position
-#         hop_size = chunk_size - overlap
-#         max_position = len(file) - chunk_size
-#         start_position = 0
-#
-#         while start_position <= max_position:
-#             # Move to correct start position
-#             file.seek(start_position)
-#             chunk = file.read(chunk_size, dtype='float32')
-#
-#             # If there's no more data, break
-#             if len(chunk) == 0:
-#                 break
-#
-#             # Process and play the chunk
-#             processed_chunk = process_chunk(chunk, sample_rate)
-#
-#             sd.play(processed_chunk, samplerate=sample_rate)
-#             sd.wait()  # Wait until the chunk is played
-#
-#
-#             # Move to the next overlapping chunk
-#             start_position += hop_size
+@dataclass
+class MidiChannelPreferences:
+    volume: int
 
 
 class SoundEngine:
-    __instance = None
-    def __init__(self):
-        self.dict = {
+    _instance = None
 
-        }
+    def __init__(self):
+        self.dict = {}
+        self.midi_channels_preferences: dict[MidiChannelPreferences] = {}
         self.samples = []
 
-    def __new__(cls, *args, **kwargs):
-        if cls.__instance is None:
-            cls.__instance = super().__new__(cls)
-        return cls.__instance
+    def add_midi_channel_configuration(self, midi_id, volume):
+        if midi_id in self.midi_channels_preferences:
+            print(f"Midi channel with id {midi_id} already exists")
+            return
+        self.midi_channels_preferences[midi_id] = MidiChannelPreferences(
+            volume=volume
+        )
 
-    def add_sample(self, data, id):
-        self.dict[id] = [len(self.samples), 0, len(data)]
+    def change_midi_channel_volume(self, midi_id, volume):
+        if midi_id not in self.midi_channels_preferences:
+            print(f"Midi channel with id {midi_id} does not exist")
+            return
+        print(f"Midi channel {midi_id} volume {volume} changed")
+        self.midi_channels_preferences[midi_id].volume = volume
+
+    def add_sample(self, data, midi_channel_id, channel):
+        self.dict[(midi_channel_id, channel)] = [len(self.samples), 0, len(data)]
         self.samples.append(data)
 
     def __callback(self, outdata, frames, time, status):
         if status:
             print(status)
 
-
         res = np.zeros((14, ), dtype=np.float32)
         keys = dict(self.dict).keys()
         for sample_keys in keys:
             id_object, cur_id, size = self.dict[sample_keys]
+            volume = self.midi_channels_preferences[sample_keys[0]].volume / 100
 
             if cur_id >= size:
+                del self.dict[sample_keys]
+                del self.samples[id_object]
                 continue
 
-            res += self.samples[id_object][cur_id % size]
+            res += self.samples[id_object][cur_id % size] * volume
             self.dict[sample_keys][1] += 1
 
-        print(res)
         outdata[:frames] = res[:, np.newaxis]
-
 
     def main_cycle(self):
         with sd.OutputStream(callback=self.__callback, samplerate=16000, channels=1):
             while True:
                 sd.sleep(4)
+
+
+def sound_engine_singleton_factory(_singleton= SoundEngine()):
+    return _singleton
+
+
 
 
 
