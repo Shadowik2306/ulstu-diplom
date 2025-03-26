@@ -22,7 +22,6 @@ class PresetHost:
         return cls._instance
 
     def update(self):
-        # TODO Try to make without new creation
         PresetRepository.synchronize()
         self.presets = {preset.name: Preset(preset.id) for preset in PresetRepository.get_all()}
 

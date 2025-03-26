@@ -3,6 +3,7 @@ from dataclasses import dataclass
 import numpy as np
 import sounddevice as sd
 
+
 @dataclass
 class MidiChannelPreferences:
     volume: int
@@ -74,24 +75,3 @@ def sound_engine_singleton_factory(_singleton= SoundEngine()):
     return _singleton
 
 
-
-
-
-
-# audio_signal = 0.5 * np.sin(2 * np.pi * 16000 * 5)
-# print(audio_signal)
-#
-#
-# # Example usage
-#
-#
-# se = SoundEngine()
-#
-# se.add_sample('test1.wav')
-# # se.add_sample('test2.wav')
-# se.main_cycle()
-
-
-
-
-# play_audio_with_overlap(filename, chunk_size=1024, overlap=512)
