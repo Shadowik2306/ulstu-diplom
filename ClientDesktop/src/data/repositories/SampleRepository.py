@@ -20,10 +20,6 @@ STATIC_PATH = Path(__file__).parent.parent.parent.parent / "static"
 def parse_sample(sample_file_name):
     file = sf.SoundFile(sample_file_name)
 
-    # if file.samplerate != 16000:
-    #     print("NOT IMPLEMENTED OTHER RATE")
-    #     return None
-
     file_freq = sf.read(sample_file_name, dtype='float32')[0]
     chunk_size = 14
     num_chunks = len(file_freq) // chunk_size + (len(file_freq) % chunk_size != 0)
@@ -57,7 +53,8 @@ class SampleRepository:
         })
 
         if response.status_code != 200:
-            raise Exception("Something went wrong")
+            print("Something went wrong")
+            return
 
         presets_connected_samples = [SampleSchemaServer.model_validate(sample) for sample in response.json()]
 

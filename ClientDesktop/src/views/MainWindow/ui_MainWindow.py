@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'MainWindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.1
+## Created by: Qt User Interface Compiler version 6.8.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -39,17 +39,17 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.verticalLayout_3 = QVBoxLayout()
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.SoundsWidget = QListWidget(MainWindow)
-        QListWidgetItem(self.SoundsWidget)
-        QListWidgetItem(self.SoundsWidget)
-        self.SoundsWidget.setObjectName(u"SoundsWidget")
+        self.PresetList = QListWidget(MainWindow)
+        QListWidgetItem(self.PresetList)
+        QListWidgetItem(self.PresetList)
+        self.PresetList.setObjectName(u"PresetList")
 
-        self.verticalLayout_3.addWidget(self.SoundsWidget)
+        self.verticalLayout_3.addWidget(self.PresetList)
 
-        self.addPresetButton = QPushButton(MainWindow)
-        self.addPresetButton.setObjectName(u"addPresetButton")
+        self.UpdatePresetsButton = QPushButton(MainWindow)
+        self.UpdatePresetsButton.setObjectName(u"UpdatePresetsButton")
 
-        self.verticalLayout_3.addWidget(self.addPresetButton)
+        self.verticalLayout_3.addWidget(self.UpdatePresetsButton)
 
 
         self.horizontalLayout.addLayout(self.verticalLayout_3)
@@ -61,10 +61,10 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_4.addWidget(self.ComputerKeyboardButton)
 
-        self.channels_layout = QHBoxLayout()
-        self.channels_layout.setObjectName(u"channels_layout")
+        self.MidiChannelsLayout = QHBoxLayout()
+        self.MidiChannelsLayout.setObjectName(u"MidiChannelsLayout")
 
-        self.verticalLayout_4.addLayout(self.channels_layout)
+        self.verticalLayout_4.addLayout(self.MidiChannelsLayout)
 
 
         self.horizontalLayout.addLayout(self.verticalLayout_4)
@@ -83,15 +83,15 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Widget", None))
 
-        __sortingEnabled = self.SoundsWidget.isSortingEnabled()
-        self.SoundsWidget.setSortingEnabled(False)
-        ___qlistwidgetitem = self.SoundsWidget.item(0)
+        __sortingEnabled = self.PresetList.isSortingEnabled()
+        self.PresetList.setSortingEnabled(False)
+        ___qlistwidgetitem = self.PresetList.item(0)
         ___qlistwidgetitem.setText(QCoreApplication.translate("MainWindow", u"Test Music 1", None));
-        ___qlistwidgetitem1 = self.SoundsWidget.item(1)
+        ___qlistwidgetitem1 = self.PresetList.item(1)
         ___qlistwidgetitem1.setText(QCoreApplication.translate("MainWindow", u"Test Music 2", None));
-        self.SoundsWidget.setSortingEnabled(__sortingEnabled)
+        self.PresetList.setSortingEnabled(__sortingEnabled)
 
-        self.addPresetButton.setText(QCoreApplication.translate("MainWindow", u"Update", None))
+        self.UpdatePresetsButton.setText(QCoreApplication.translate("MainWindow", u"Update", None))
         self.ComputerKeyboardButton.setText(QCoreApplication.translate("MainWindow", u"Computer Keyboard", None))
     # retranslateUi
 

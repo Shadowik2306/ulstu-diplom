@@ -35,7 +35,7 @@ class PresetRepository:
 
         if response.status_code != 200:
             print("Something went wrong with connection")
-            return
+            return 1
 
         global_presets = [PresetSchemaSync.model_validate(preset) for preset in response.json()['presets']]
 
@@ -56,6 +56,8 @@ class PresetRepository:
                     preset_model.name = preset.name
 
                 session.commit()
+
+        return 0
 
 
 

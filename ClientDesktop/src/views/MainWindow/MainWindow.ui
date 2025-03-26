@@ -46,7 +46,7 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QListWidget" name="SoundsWidget">
+        <widget class="QListWidget" name="PresetList">
          <item>
           <property name="text">
            <string>Test Music 1</string>
@@ -60,7 +60,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="addPresetButton">
+        <widget class="QPushButton" name="UpdatePresetsButton">
          <property name="text">
           <string>Update</string>
          </property>
@@ -78,7 +78,7 @@
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="channels_layout"/>
+        <layout class="QHBoxLayout" name="MidiChannelsLayout"/>
        </item>
       </layout>
      </item>

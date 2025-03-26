@@ -1,14 +1,11 @@
 import sys
+from threading import Thread
 
 from PySide6.QtWidgets import QApplication
 
-from app.data.repositories.NoteRepository import NoteRepository
-from app.utils.MIDI.MidiHost import MidiHost
-from app.utils.Music.PresetHost import PresetHost
-from app.views.MainWindow.MainWindow import MainWindow
-from threading import Thread
-
-from app.utils.Music.SoundEngine import sound_engine_singleton_factory
+from src.utils.MidiHost import midi_host_singleton_factory
+from src.utils.SoundEngine import sound_engine_singleton_factory
+from src.views.MainWindow.MainWindow import MainWindow
 
 
 if __name__ == '__main__':
@@ -16,11 +13,7 @@ if __name__ == '__main__':
     widget = MainWindow()
     widget.show()
 
-    PresetHost()
-
-    NoteRepository.initialize_table()
-
-    midi_host = MidiHost()
+    midi_host = midi_host_singleton_factory()
     midi_host_thread = Thread(target=midi_host.listen_for_midi)
     midi_host_thread.start()
 
