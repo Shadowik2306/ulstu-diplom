@@ -3,9 +3,9 @@ from threading import Thread
 
 from PySide6.QtWidgets import QApplication
 
-from src.utils.MidiHost import midi_host_singleton_factory
-from src.utils.SoundEngine import sound_engine_singleton_factory
-from src.views.MainWindow import MainWindow
+from utils.MidiHost import midi_host_singleton_factory
+from utils.SoundEngine import sound_engine_singleton_factory
+from views.MainWindow import MainWindow
 
 
 if __name__ == '__main__':
