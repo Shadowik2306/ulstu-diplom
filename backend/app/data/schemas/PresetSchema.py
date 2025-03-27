@@ -8,6 +8,9 @@ class PresetSchema(BaseModel):
     user_id: int
     name: str
     color: str
+
+
+class PresetAndSamplesSchema(PresetSchema):
     samples: list["SampleSchema"]
 
 

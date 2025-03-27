@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from app.data.schemas.SampleSchema import SampleSchema
+from src.data.schemas.SampleSchema import SampleSchema
 
 
 class PresetSchema(BaseModel):

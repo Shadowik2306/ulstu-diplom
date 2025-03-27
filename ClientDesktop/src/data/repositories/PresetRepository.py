@@ -1,12 +1,13 @@
 import requests
 from sqlalchemy import select, delete
 
-from app.data.database import session_maker
-from app.data.models import PresetModel
-from app.data.schemas.PresetSchema import PresetSchema, PresetCreateSchema, PresetSchemaSync
-from app.config import settings
+from src.data.database import session_maker
+from src.data.models import PresetModel
+from src.data.schemas.PresetSchema import PresetSchema, PresetCreateSchema, PresetSchemaSync
+from src.config import settings
 
-URL_PATH_PRESET = "/presets"
+URL_PATH_PRESET = "/presets/users_presets"
+
 
 class PresetRepository:
     @classmethod
@@ -29,8 +30,12 @@ class PresetRepository:
 
     @classmethod
     def synchronize(cls):
+        if not settings.jwt_secret_key:
+            return 1
+
         response = requests.get(settings.server_url + URL_PATH_PRESET, headers={
             "Accept": "application/json",
+            "Authorization": "Bearer " + settings.jwt_secret_key
         })
 
         if response.status_code != 200:

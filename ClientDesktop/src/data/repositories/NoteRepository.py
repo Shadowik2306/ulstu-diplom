@@ -1,7 +1,7 @@
 from sqlalchemy import select
 
-from app.data.database import session_maker
-from app.data.models import NoteModel
+from src.data.database import session_maker
+from src.data.models import NoteModel
 
 notes_data = [
     {"id": 1, "name": "C"},

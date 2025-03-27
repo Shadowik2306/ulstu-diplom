@@ -2,18 +2,21 @@ import sys
 import time
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QApplication, QWidget
+from PySide6.QtWidgets import QApplication, QWidget, QMenuBar, QMainWindow
 
+from src.config import settings
 from src.utils.ComputerKeyboard import computer_keyboard_singleton_factory
 from src.utils.PresetHost import preset_host_singleton_factory
-from src.views.MainWindow.ui_MainWindow import Ui_MainWindow
+from src.views.MusicWindow.ui_MusicWindow import Ui_MusicWindow
 from src.views.MidiChannelWidget.MidiChannelWidget import MidiChannelWidget
+from src.views.SingInWindow.sign_in import SignInWindow
 
 
-class MainWindow(QWidget):
+class MusicWindow(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.ui = Ui_MainWindow()
+
+        self.ui = Ui_MusicWindow()
         self.ui.setupUi(self)
         self.setWindowTitle("")
 
@@ -112,6 +115,6 @@ class MainWindow(QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    widget = MainWindow()
+    widget = MusicWindow()
     widget.show()
     sys.exit(app.exec())

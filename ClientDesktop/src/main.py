@@ -5,12 +5,14 @@ from PySide6.QtWidgets import QApplication
 
 from src.utils.MidiHost import midi_host_singleton_factory
 from src.utils.SoundEngine import sound_engine_singleton_factory
-from src.views.MainWindow.MainWindow import MainWindow
+from src.views.MainWindow import MainWindow
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    app.setApplicationName("MyQtApp")
     widget = MainWindow()
+    widget.setWindowTitle("My Qt Application")
     widget.show()
 
     midi_host = midi_host_singleton_factory()
@@ -21,4 +23,4 @@ if __name__ == '__main__':
     sound_engine_thread = Thread(target=sound_engine.main_cycle)
     sound_engine_thread.start()
 
-    sys.exit(app.exec())
+    sys.exit(app.exec_())

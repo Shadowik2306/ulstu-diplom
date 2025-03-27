@@ -4,10 +4,10 @@ from pathlib import Path
 import requests
 from sqlalchemy import select, update, delete
 
-from app.config import settings
-from app.data.database import session_maker
-from app.data.models import SampleModel
-from app.data.schemas.SampleSchema import SampleSchema, SampleSchemaServer
+from src.config import settings
+from src.data.database import session_maker
+from src.data.models import SampleModel
+from src.data.schemas.SampleSchema import SampleSchema, SampleSchemaServer
 
 import soundfile as sf
 import numpy as np
