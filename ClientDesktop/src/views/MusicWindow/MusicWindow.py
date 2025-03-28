@@ -1,15 +1,10 @@
 import sys
-import time
+from PySide6.QtWidgets import QApplication, QWidget
 
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QApplication, QWidget, QMenuBar, QMainWindow
-
-from src.config import settings
 from src.utils.ComputerKeyboard import computer_keyboard_singleton_factory
 from src.utils.PresetHost import preset_host_singleton_factory
 from src.views.MusicWindow.ui_MusicWindow import Ui_MusicWindow
 from src.views.MidiChannelWidget.MidiChannelWidget import MidiChannelWidget
-from src.views.SingInWindow.sign_in import SignInWindow
 
 
 class MusicWindow(QWidget):

@@ -44,7 +44,6 @@ class PresetHost:
         return res
 
 
-
 def preset_host_singleton_factory(_object=PresetHost()):
     return _object
 

@@ -1,4 +1,3 @@
-from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QMainWindow, QStatusBar, QMenuBar
 
 from src.config import settings
@@ -12,7 +11,7 @@ class MainWindow(QMainWindow):
 
         while settings.jwt_secret_key is None:
             sign_in_window = SignInWindow()
-            sign_in_window.exec_()
+            sign_in_window.exec()
 
         self.setCentralWidget(MusicWindow())
         self.setWindowTitle("TINKLE APP")

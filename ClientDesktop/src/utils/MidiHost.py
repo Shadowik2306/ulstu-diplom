@@ -22,6 +22,7 @@ class MidiListener(threading.Thread):
                     if message.type == 'note_off':
                         for subscriber in self.subscribers:
                             subscriber.note_off(message.note)
+                time.sleep(10)
 
     def stop(self):
         self.running = False
@@ -66,7 +67,7 @@ class MidiHost:
             # Update observed ports
             self.observed_ports = current_ports
 
-            time.sleep(1)
+            time.sleep(10)
 
 
 def midi_host_singleton_factory(_object=MidiHost()):

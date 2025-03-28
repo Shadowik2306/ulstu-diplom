@@ -1,26 +1,26 @@
 import sys
-from threading import Thread
 
 from PySide6.QtWidgets import QApplication
 
-from utils.MidiHost import midi_host_singleton_factory
-from utils.SoundEngine import sound_engine_singleton_factory
-from views.MainWindow import MainWindow
+from src.data.models import CustomBaseModel
+from src.data.database import engine
+
+CustomBaseModel.metadata.create_all(engine)
+
+from src.utils.SoundEngine import sound_engine_singleton_factory
+from src.views.MainWindow import MainWindow
+
+import sounddevice as sd
 
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    app.setApplicationName("MyQtApp")
-    widget = MainWindow()
-    widget.setWindowTitle("My Qt Application")
-    widget.show()
-
-    midi_host = midi_host_singleton_factory()
-    midi_host_thread = Thread(target=midi_host.listen_for_midi)
-    midi_host_thread.start()
-
     sound_engine = sound_engine_singleton_factory()
-    sound_engine_thread = Thread(target=sound_engine.main_cycle)
-    sound_engine_thread.start()
 
-    sys.exit(app.exec_())
+    with sd.OutputStream(callback=sound_engine.callback, samplerate=16000, channels=1):
+        app = QApplication(sys.argv)
+        app.setApplicationName("MyQtApp")
+        widget = MainWindow()
+        widget.setWindowTitle("My Qt Application")
+        widget.show()
+
+        sys.exit(app.exec())

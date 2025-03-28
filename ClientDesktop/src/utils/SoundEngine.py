@@ -1,3 +1,5 @@
+import time as t
+
 import numpy as np
 import sounddevice as sd
 
@@ -6,6 +8,7 @@ class SoundEngine:
     def __init__(self):
         self.midi_channel_volumes = {}
         self.sound_state = {}
+        self.last = 0
 
     def add_midi_channel(self, midi_channel_id, volume):
         if midi_channel_id in self.midi_channel_volumes:
@@ -25,10 +28,12 @@ class SoundEngine:
             return
         self.sound_state[(midi_channel_id, note)] = iter(data)
 
-
-    def __callback(self, outdata, frames, time, status):
+    def callback(self, outdata, frames, time, status):
         if status:
             print(status)
+
+        print(self.last - time.currentTime)
+        self.last = time.currentTime
 
         res = np.zeros((14, ), dtype=np.float32)
         saved_sound_state = dict(self.sound_state).items()
@@ -41,12 +46,12 @@ class SoundEngine:
                 del self.sound_state[(midi_channel, note)]
                 continue
 
+        # print(time.currentTime, res)
         outdata[:frames] = res[:, np.newaxis]
 
-    def main_cycle(self):
-        with sd.OutputStream(callback=self.__callback, samplerate=16000, channels=1):
-            while True:
-                sd.sleep(4)
+
+
+
 
 
 

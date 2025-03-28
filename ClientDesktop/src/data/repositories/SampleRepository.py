@@ -35,9 +35,10 @@ def parse_sample(sample_file_name):
 
 def download_and_parse_sample(sample_name):
     response = requests.get(settings.server_url + f"{URL_DOWNLOAD_SAMPLE.format(file_name=sample_name)}")
-    file_path = STATIC_PATH / sample_name
+    file_path = sample_name
     with open(file_path, "wb") as file:
         file.write(response.content)
+
     parsed_sample = parse_sample(file_path)
     os.remove(file_path)
     return parsed_sample
