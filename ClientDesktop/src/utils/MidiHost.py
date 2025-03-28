@@ -1,88 +1,73 @@
-import threading
-import mido
-import time
-import sys
+import rtmidi
+from rtmidi.midiutil import open_midiinput
 
 
-class MidiListener(threading.Thread):
-    def __init__(self, port_name):
-        super().__init__()
-        self.port_name = port_name
-        self.running = True
-        self.subscribers = set()
+class MidiDevice:
 
-    def run(self):
-        with mido.open_input(self.port_name) as inport:
-            print(f"Listening for MIDI messages on {self.port_name}...")
-            while self.running:
-                for message in inport.iter_pending():
-                    if message.type == 'note_on':
-                        for subscriber in self.subscribers:
-                            subscriber.note_on(message.note)
-                    if message.type == 'note_off':
-                        for subscriber in self.subscribers:
-                            subscriber.note_off(message.note)
-                time.sleep(10)
+    def __init__(self, port_num, midi_in):
+        self.midi_in, port_name = open_midiinput(port_num)
+        self.midi_in.set_callback(self.callback)
+        self.__subscribers = set()
 
-    def stop(self):
-        self.running = False
+    def __del__(self):
+        del self.midi_in
+
+    def callback(self, event, data=None):
+        message, deltatime = event
+        status = message[0]
+
+        if status & 0xF0 == 0x90:  # note_on
+            note, velocity = message[1], message[2]
+            # print(f"Note On: {note}, Velocity: {velocity}")
+            for subscriber in self.__subscribers:
+                subscriber.note_on(note)
+        elif status & 0xF0 == 0x80:  # note_off
+            note, velocity = message[1], message[2]
+            # print(f"Note Off: {note}, Velocity: {velocity}")
 
     def add_subscriber(self, subscriber):
-        self.subscribers.add(subscriber)
+        self.__subscribers.add(subscriber)
 
     def remove_subscriber(self, subscriber):
-        self.subscribers.remove(subscriber)
-
+        self.__subscribers.remove(subscriber)
 
 class MidiHost:
-    _instance = None
+    last_midi_ports = []
+    midi_ports = {}
 
-    def __init__(self):
-        self.observed_ports = set()
-        self.active_listeners = {}
+    @classmethod
+    def update_midi_ports(cls):
+        midi_in = rtmidi.MidiIn()
 
-    def listen_for_midi(self):
-        while True:
-            try:
-                current_ports = set(mido.get_input_names())
-            except Exception:
-                continue
+        try:
+            ports = midi_in.get_ports()
+        except Exception as e:
+            print(f"Some problems")
+            return
 
-            new_ports = current_ports - self.observed_ports
+        for port_id, port_name in enumerate(ports):
+            if port_id < len(cls.last_midi_ports):
+                if port_name != cls.last_midi_ports[port_id]:
+                    del cls.midi_ports[cls.last_midi_ports[port_id]]
+                    print(f"Device disconnected {port_name}")
+                else:
+                    continue
 
-            for port in new_ports:
-                listener = MidiListener(port)
-                listener.start()
-                self.active_listeners[port] = listener
+            print(f"Device connected {port_name}")
+            cls.midi_ports[port_name] = MidiDevice(port_id, midi_in)
 
-            disconnected_ports = self.observed_ports - current_ports
+        for undefined_ports_name in cls.last_midi_ports[len(ports):]:
+            del cls.midi_ports[undefined_ports_name]
+            print(f"Device disconnected {undefined_ports_name}")
 
-            for port in disconnected_ports:
-                if port in self.active_listeners:
-                    listener = self.active_listeners[port]
-                    listener.stop()
-                    listener.join()
-                    del self.active_listeners[port]
+        cls.last_midi_ports = ports
 
-            # Update observed ports
-            self.observed_ports = current_ports
+        return ports
 
-            time.sleep(10)
-
-
-def midi_host_singleton_factory(_object=MidiHost()):
-    return _object
 
 
 if __name__ == '__main__':
-    try:
-        host = MidiHost()
-        host.listen_for_midi()
-    except KeyboardInterrupt:
-        print("\nExiting MIDI host.")
-        sys.exit(0)
-
-
-
-
-
+    import time
+    while True:
+        MidiHost.update_midi_ports()
+        time.sleep(1)

@@ -23,4 +23,6 @@ if __name__ == '__main__':
         widget.setWindowTitle("My Qt Application")
         widget.show()
 
+
+
         sys.exit(app.exec())

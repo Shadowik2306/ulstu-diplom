@@ -4,7 +4,7 @@ from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QApplication, QWidget
 
 from src.utils.ComputerKeyboard import computer_keyboard_singleton_factory
-from src.utils.MidiHost import midi_host_singleton_factory
+from src.utils.MidiHost import MidiHost
 from src.utils.PresetHost import Preset
 from src.utils.SoundEngine import sound_engine_singleton_factory
 from src.views.MidiChannelWidget.ui_Midi_ChannelWidget import Ui_MidiChannelWidget
@@ -31,7 +31,6 @@ class MidiChannelWidget(QWidget):
         self.ui.RemovePresetButton.setStyleSheet("")
         self.ui.RemovePresetButton.clicked.connect(self.remove_preset)
 
-        self.midi_host = midi_host_singleton_factory()
         self.computer_keyboard = computer_keyboard_singleton_factory()
         self.current_subscription = None
         self.device_list = []
@@ -103,7 +102,8 @@ class MidiChannelWidget(QWidget):
         self.is_enabled = not self.is_enabled
 
     def midi_host_update(self):
-        new_devices = list(self.midi_host.active_listeners.keys())
+        MidiHost.update_midi_ports()
+        new_devices = list(MidiHost.midi_ports)
 
         if self.device_list != new_devices:
             self.ui.DevicesBox.clear()
@@ -127,7 +127,7 @@ class MidiChannelWidget(QWidget):
             self.computer_keyboard.add_subscriber(self)
             return
 
-        self.current_subscription = self.midi_host.active_listeners[selected_item]
+        self.current_subscription = MidiHost.midi_ports[selected_item]
         self.current_subscription.add_subscriber(self)
 
     def note_on(self, note):
