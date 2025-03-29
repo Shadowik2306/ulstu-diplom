@@ -141,7 +141,10 @@ class MidiChannelWidget(QWidget):
         )
 
     def note_off(self, note):
-        pass
+        self.sound_engine.remove_sound(
+            midi_channel_id=self.id,
+            note=note,
+        )
 
 
 if __name__ == "__main__":

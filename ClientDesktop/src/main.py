@@ -2,6 +2,7 @@ import sys
 
 from PySide6.QtWidgets import QApplication
 
+from src.config import settings
 from src.data.models import CustomBaseModel
 from src.data.database import engine
 
@@ -20,9 +21,10 @@ if __name__ == '__main__':
         app = QApplication(sys.argv)
         app.setApplicationName("MyQtApp")
         widget = MainWindow()
-        widget.setWindowTitle("My Qt Application")
-        widget.show()
+        widget.setWindowTitle("Tinkling App")
 
-
-
+        if settings.jwt_secret_key:
+            widget.show()
+        else:
+            sys.exit()
         sys.exit(app.exec())

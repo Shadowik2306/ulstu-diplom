@@ -23,6 +23,8 @@ class MidiDevice:
                 subscriber.note_on(note)
         elif status & 0xF0 == 0x80:  # note_off
             note, velocity = message[1], message[2]
+            for subscriber in self.__subscribers:
+                subscriber.note_off(note)
             # print(f"Note Off: {note}, Velocity: {velocity}")
 
     def add_subscriber(self, subscriber):

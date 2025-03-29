@@ -28,12 +28,14 @@ class SoundEngine:
             return
         self.sound_state[(midi_channel_id, note)] = iter(data)
 
+    def remove_sound(self, midi_channel_id, note):
+        if (midi_channel_id, note) not in self.sound_state:
+            return
+        del self.sound_state[(midi_channel_id, note)]
+
     def callback(self, outdata, frames, time, status):
         if status:
             print(status)
-
-        # print(self.last - time.currentTime)
-        # self.last = time.currentTime
 
         res = np.zeros((14, ), dtype=np.float32)
         saved_sound_state = dict(self.sound_state).items()
@@ -46,11 +48,7 @@ class SoundEngine:
                 del self.sound_state[(midi_channel, note)]
                 continue
 
-        # print(time.currentTime, res)
         outdata[:frames] = res[:, np.newaxis]
-
-
-
 
 
 

@@ -28,7 +28,8 @@ class Settings(BaseSettings):
 
     @classmethod
     def remove_jwt(cls) -> None:
-        keyring.delete_password(system_name, user_name)
+        if keyring.get_password(system_name, user_name):
+            keyring.delete_password(system_name, user_name)
 
 
 settings = Settings()
