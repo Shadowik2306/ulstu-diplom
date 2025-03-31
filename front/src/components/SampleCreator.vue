@@ -6,9 +6,12 @@ import ButtonComponent from "./ButtonComponent.vue";
 import {myFetch, serverUrl} from "../assets/myFetch.js";
 import TextCloud from "./TextCloud.vue";
 import LikeButton from "./LikeButton.vue";
+import AddButton from "./AddButton.vue";
 
 export default {
-  components: {LikeButton, TextCloud, ButtonComponent, InputComponent: SearchComponent, MusicPlayer, NoteContainer},
+  components: {
+    AddButton,
+    LikeButton, TextCloud, ButtonComponent, InputComponent: SearchComponent, MusicPlayer, NoteContainer},
   data(){
     return {
       notes_data: [
@@ -32,6 +35,7 @@ export default {
       is_loaded: false,
       editable: false,
       is_liked: false,
+      is_user_connected: false
     }
   },
   validations: {
@@ -125,6 +129,7 @@ export default {
         this.preset_name = preset.name
         if (this.storage.token_payload) {
           const cur_user = JSON.parse(this.storage.token_payload).sub
+          this.is_user_connected = true
           this.editable = cur_user === preset.user_id
 
           myFetch(`/preset/${this.$route.params.id}/like`, {}
@@ -221,6 +226,20 @@ export default {
         method: 'PATCH',
       }).then(response => response.json()
       ).then(data => {})
+    },
+    clone_preset() {
+      myFetch(`/preset/${this.$route.params.id}`, {
+        method: 'POST',
+      }).then(response => {
+        if (response.ok) {
+          return response.json()
+        }
+        return response.json().then(error => {throw new Error(error.detail)})
+      }).then(data => {
+        window.location.href = `/preset/${data.id}`
+      }).catch(error => {
+        window.alert(error)
+      })
     }
   },
   created() {
@@ -250,6 +269,11 @@ export default {
       </div>
       <div v-else class="preset-name">
         <TextCloud :text="this.preset_name"></TextCloud>
+        <LikeButton
+            :initial_liked="this.is_liked"
+            @like="like_preset"
+        />
+        <AddButton v-if="is_user_connected" @click="this.clone_preset"/>
       </div>
       <div class="generate-button-container" v-if="editable">
         <ButtonComponent label="Generate" class="button" @click="this.create_samples"/>
@@ -324,6 +348,11 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 2vh;
+}
+
+.preset-name {
+  display: flex;
+  gap: 1vh;
 }
 
 .request-area .button {

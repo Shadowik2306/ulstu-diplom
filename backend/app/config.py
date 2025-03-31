@@ -25,9 +25,9 @@ class AuthJWT(BaseSettings):
 
 
 class SubscriptionConstraint(BaseSettings):
-    max_samples_count: int = 10
+    max_samples_count: int = 20
     max_preset_count: int = 3
-    max_requests_count: int = 20
+    max_requests_count: int = 10
 
 
 subscription_settings = SubscriptionConstraint()

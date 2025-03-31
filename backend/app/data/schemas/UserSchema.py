@@ -21,7 +21,7 @@ class UserSchema(BaseModel):
     username: str
     email: str
     password: bytes
-    subscription_to: datetime.date
+    subscription_to: datetime.date | None
 
     @computed_field
     @property

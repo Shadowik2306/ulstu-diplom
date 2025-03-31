@@ -9,7 +9,7 @@ from starlette import status
 
 from app.config import SubscriptionConstraint
 from app.data.database import async_session_maker
-from app.data.models import PresetModel, UserModel, UserFavorites
+from app.data.models import PresetModel, UserModel, UserFavorites, SampleModel
 from app.data.repositories.MusicRepository import check_music
 from app.data.schemas.PresetSchema import PresetSchema, PresetCreateSchema, PresetsPageSchema, PresetUpdateSchema, \
     PresetAndSamplesSchema
@@ -172,9 +172,39 @@ class PresetRepository:
             return PresetSchema.model_validate(new_preset, from_attributes=True)
 
     @classmethod
+    @check_user_presets_constraint()
+    async def clone_preset(cls, user: UserSchema, preset_id: int) -> PresetSchema:
+        async with async_session_maker() as session:
+            query = select(PresetModel).where(preset_id == PresetModel.id)
+            res = await session.execute(query)
+            original_preset = res.scalar()
+
+            new_preset = PresetModel(
+                user_id=user.id,
+                name=original_preset.name,
+                color=original_preset.color
+            )
+
+            for samples in original_preset.samples:
+                new_sample = SampleModel(
+                    name=samples.name,
+                    music_id=samples.music_id,
+                    note_id=samples.note_id
+                )
+                new_preset.samples.append(new_sample)
+
+            session.add(new_preset)
+
+            await session.commit()
+
+            return PresetSchema.model_validate(new_preset, from_attributes=True)
+
+    @classmethod
     async def get_last_presets(cls) -> list[PresetSchema]:
         async with async_session_maker() as session:
-            query = select(PresetModel).order_by(PresetModel.created_at).limit(9)
+            query = select(PresetModel).filter(
+                PresetModel.name != ''
+            ).order_by(PresetModel.created_at).limit(9)
             res = await session.execute(query)
 
             last_presets = res.scalars().all()
@@ -188,6 +218,8 @@ class PresetRepository:
                 PresetModel, func.count(UserFavorites.user_id)
             ).join(
                 UserFavorites, PresetModel.id == UserFavorites.preset_id, isouter=True
+            ).filter(
+                PresetModel.name != ''
             ).group_by(
                 PresetModel.id
             ).order_by(

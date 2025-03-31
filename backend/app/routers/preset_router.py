@@ -92,6 +92,14 @@ async def get_preset(preset_id: int) -> PresetAndSamplesSchema:
     return await PresetRepository.get(preset_id)
 
 
+@preset_router.post("/")
+async def clone_preset(
+        preset_id: int,
+        user: UserSchema = Depends(auth.get_current_auth_user),
+):
+    res = await PresetRepository.clone_preset(user, preset_id)
+    return res
+
 @preset_router.patch("/")
 async def update_preset(
         preset_id: int,
