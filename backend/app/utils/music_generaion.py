@@ -3,7 +3,7 @@ import random
 import shutil
 import time
 from pathlib import Path
-
+from fastapi import HTTPException
 from sqlalchemy.exc import InvalidRequestError
 
 
@@ -38,11 +38,17 @@ def get_random_file_from_dir(directory_path):
     return directory_path / random.choice(files)
 
 
-async def create_samples(preset_id: int, sample_req: MusicCreateRequestSchema):
+async def create_samples(
+        preset_id: int,
+        sample_req: MusicCreateRequestSchema
+) -> list[SampleCreateSchema]:
     from app.data.repositories.MusicRepository import MusicRepository
 
     if sample_req.text_request not in generation_dct:
-        raise NotImplementedError(f"The sample request {sample_req.text_request} was not found.")
+        raise HTTPException(
+            status_code=501,
+            detail=f"The sample request \"{sample_req.text_request}\" was not found."
+        )
 
     res = []
     for sample_num in range(sample_req.count):
@@ -65,9 +71,6 @@ async def create_samples(preset_id: int, sample_req: MusicCreateRequestSchema):
 
 async def delete_sample_file(sample_ulr: str):
     os.remove(static_place / sample_ulr)
-
-
-
 
 
 if __name__ == '__main__':

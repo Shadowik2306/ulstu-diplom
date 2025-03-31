@@ -27,6 +27,7 @@ class AudioLDM2Generator:
 
             scipy.io.wavfile.write(output_file, rate, data=result)
 
+
 if __name__ == "__main__":
     ldm_model = AudioLDM2Generator()
     ldm_model.generate_audio("City sound")

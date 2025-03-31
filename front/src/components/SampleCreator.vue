@@ -116,7 +116,6 @@ export default {
         this.is_loaded = true
         return
       }
-
       myFetch(`/preset/${this.$route.params.id}/`
       ).then(response => {
         return response.json();
@@ -153,6 +152,9 @@ export default {
       if (this.$route.params.id === 0) {
         return
       }
+      if (this.request_text === "") {
+        return;
+      }
       myFetch(`/preset/${this.$route.params.id}/samples`, {
         method: 'POST',
         headers: {
@@ -163,12 +165,18 @@ export default {
           'count': 1
         })
       }).then(response => {
-        return response.json();
+        if (response.ok) {
+          return response.json();
+        }
+        else {
+          return response.json().then(error => {throw new Error(error.detail)})
+        }
       }).then(data => {
         console.log(data)
         this.get_preset()
       }).catch(error => {
         console.warn(error)
+        window.alert(error)
       })
     },
     update_sample(sample_id, note_id) {

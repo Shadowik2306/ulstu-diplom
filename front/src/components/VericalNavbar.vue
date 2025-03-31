@@ -92,11 +92,17 @@ export default {
           {
             method: "POST",
           }
-      ).then(
-          res => res.json()
-      ).then( data => {
+      ).then(res => {
+        if (res.ok) {
+          return res.json();
+        }
+        else {
+          return res.json().then(error => {throw new Error(error.detail)})
+        }
+      }).then( data => {
         this.navigate(`/preset/${data.id}`);
       }).catch(error => {
+        window.alert(error);
         console.error(error)
       })
     }

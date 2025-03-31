@@ -73,6 +73,18 @@ class UserModel(CustomBaseModel):
 
     presets: Mapped[list["PresetModel"]] = relationship(back_populates="user", lazy='selectin')
     favorites: Mapped[list["PresetModel"]] = relationship(secondary='UserFavorites', lazy='selectin')
+    requests: Mapped[list["UserRequestsModel"]] = relationship(lazy="selectin")
+
+    subscription_to: Mapped[datetime.date] = mapped_column(nullable=True)
+
+
+class UserRequestsModel(CustomBaseModel):
+    __tablename__ = 'UserRequests'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    request: Mapped[str]
+    created_at: Mapped[datetime.date] = mapped_column(default=datetime.date.today())
+    user_id: Mapped[int] = mapped_column(ForeignKey("User.id"))
 
 
 class UserFavorites(CustomBaseModel):

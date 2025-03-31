@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Query, Depends
 
 from app.data.repositories.PresetRepository import PresetRepository
-from app.data.schemas.PresetSchema import PresetSchema, PresetCreateSchema, PresetsPageSchema, PresetUpdateSchema
+from app.data.schemas.PresetSchema import PresetSchema, PresetAndSamplesSchema, PresetCreateSchema, PresetsPageSchema, PresetUpdateSchema
 from app.data.schemas.UserSchema import UserSchema
 from app.utils import auth
 
@@ -88,7 +88,7 @@ preset_router = APIRouter(
 
 
 @preset_router.get("/")
-async def get_preset(preset_id: int) -> PresetSchema:
+async def get_preset(preset_id: int) -> PresetAndSamplesSchema:
     return await PresetRepository.get(preset_id)
 
 

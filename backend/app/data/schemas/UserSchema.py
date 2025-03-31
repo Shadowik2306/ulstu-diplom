@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from datetime import date
 
 
 class UserRegisterSchema(BaseModel):
@@ -18,6 +19,12 @@ class UserSchema(BaseModel):
     username: str
     email: str
     password: bytes
+    subscription_to: date | None
+
+    @property
+    def is_subscribed(self) -> bool:
+        return self.subscription_to > date.today() if self.subscription_to else False
+
 
 
 class UserLoginSchema(BaseModel):
@@ -33,3 +40,5 @@ class TokenSchema(BaseModel):
 class TokenPayload(BaseModel):
     sub: int = Field(..., validation_alias='id')
     username: str
+    subscription_to: date
+    is_subscribed: bool

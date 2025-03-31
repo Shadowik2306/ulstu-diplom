@@ -1,10 +1,63 @@
-from sqlalchemy import select, update, delete
+
+import functools
+from http import HTTPStatus
+
+from sqlalchemy import select, update, delete, func
+from fastapi import HTTPException
 
 from app.data.database import async_session_maker
-from app.data.models import SampleModel
+from app.data.models import SampleModel, PresetModel
 from app.data.repositories.MusicRepository import check_music
+from app.data.repositories.UserRequestsRepository import UserRequestsRepository, check_user_requests_constraint
+from app.data.schemas.MusicSchema import MusicCreateRequestSchema
 from app.data.schemas.SampleSchema import SampleSchema, SampleCreateSchema, SampleUpdateConnection
+from app.data.schemas.UserSchema import UserSchema
 
+from app.config import SubscriptionConstraint
+
+from app.utils.music_generaion import create_samples
+
+
+def check_user_sample_constraint():
+    def wrapper(func):
+        @functools.wraps(func)
+        async def wrapped(*args, **kwargs):
+            if len(args) <= 2:
+                raise HTTPException(
+                    status_code=HTTPStatus.BAD_REQUEST,
+                    detail="Something went wrong"
+                )
+
+            user = args[1]
+            if type(user) is not UserSchema:
+                raise HTTPException(
+                    status_code=HTTPStatus.BAD_REQUEST,
+                    detail="Something went wrong"
+                )
+            user: UserSchema
+
+            if not user.is_subscribed:
+                request = args[2]
+                if type(request) is not MusicCreateRequestSchema:
+                    raise HTTPException(
+                        status_code=HTTPStatus.BAD_REQUEST,
+                        detail="Something went wrong"
+                    )
+                request: MusicCreateRequestSchema
+
+                res = await SampleRepository.get_users_samples_count(user)
+                if SubscriptionConstraint().max_requests_count - res <= 0:
+                    raise HTTPException(
+                        status_code=403,
+                        detail="You have reached the maximum number of available samples"
+                    )
+
+            res = await func(*args, **kwargs)
+            return res
+
+        return wrapped
+
+    return wrapper
 
 class SampleRepository:
     @classmethod
@@ -28,9 +81,8 @@ class SampleRepository:
             samples_models: list[SampleModel] = res.scalars().all()
             return [SampleSchema.model_validate(sample_model, from_attributes=True) for sample_model in samples_models]
 
-
     @classmethod
-    async def create_one(cls, sample: SampleCreateSchema) -> SampleSchema:
+    async def __create_one(cls, sample: SampleCreateSchema) -> SampleSchema:
         async with async_session_maker() as session:
             new_sample = SampleModel(**sample.model_dump())
 
@@ -40,10 +92,21 @@ class SampleRepository:
             return await cls.get(new_sample.id)
 
     @classmethod
-    async def create_many(cls, samples: list[SampleCreateSchema]) -> list[SampleSchema]:
+    @check_user_requests_constraint()
+    @check_user_sample_constraint()
+    async def create_many(
+            cls,
+            user: UserSchema,
+            sample_req: MusicCreateRequestSchema,
+            preset_id: int,
+    ) -> list[SampleSchema]:
         res = []
-        for sample in samples:
-            res.append(await cls.create_one(sample))
+
+        new_samples: list[SampleCreateSchema] = await create_samples(preset_id, sample_req)
+        await UserRequestsRepository().add_one(user, sample_req)
+        for sample in new_samples:
+            await cls.__create_one(sample)
+
         return res
 
     @classmethod
@@ -68,3 +131,15 @@ class SampleRepository:
             await session.commit()
 
             return sample_model.id
+
+    @classmethod
+    async def get_users_samples_count(cls, user: UserSchema) -> int:
+        async with async_session_maker() as session:
+            query = select(func.count()).select_from(SampleModel).join(PresetModel).filter(user.id == PresetModel.user_id)
+            res = await session.execute(query)
+            user_samples_count: int = res.scalar()
+
+            return user_samples_count
+
+
+
