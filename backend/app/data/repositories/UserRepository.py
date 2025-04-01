@@ -1,3 +1,5 @@
+import datetime
+
 from sqlalchemy import select, update
 
 from app.data.database import async_session_maker
@@ -31,6 +33,18 @@ class UserRepository:
             res = await session.execute(query)
             user_model: UserModel = res.scalars().first()
             return UserSchema.model_validate(user_model, from_attributes=True)
+
+    @classmethod
+    async def set_subscribe(cls, user: UserSchema):
+        async with async_session_maker() as session:
+            query = select(UserModel).where(user.id == UserModel.id)
+            res = await session.execute(query)
+            user = res.scalar()
+
+            user.subscription_to = datetime.date.today() + datetime.timedelta(days=31)
+
+            await session.commit()
+            return UserSchema.model_validate(user, from_attributes=True)
 
 
 class JwtBlackListRepository:
