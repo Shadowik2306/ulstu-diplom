@@ -134,6 +134,8 @@ class MidiChannelWidget(QWidget):
         if self.__preset is None or not self.is_enabled:
             return
         data = self.__preset.get_sample_sound(note)
+        if not data:
+            return
         self.sound_engine.add_sound(
             midi_channel_id=self.id,
             note=note,

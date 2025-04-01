@@ -1,4 +1,6 @@
+import requests
 from PySide6 import QtGui
+from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QMainWindow, QStatusBar, QMenuBar
 
 from src.config import settings
@@ -22,6 +24,10 @@ class MainWindow(QMainWindow):
         if not settings.jwt_secret_key:
             self.log_out()
 
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.refresh_token)
+        self.timer.start(5000)
+
 
     def log_out(self):
         settings.remove_jwt()
@@ -34,3 +40,17 @@ class MainWindow(QMainWindow):
             return
 
         self.setCentralWidget(MusicWindow())
+
+    def refresh_token(self):
+        response = requests.get(
+            settings.server_url + "/auth/refresh",
+            headers={
+                "Authorization": f"Bearer {settings.jwt_secret_key}"
+            }
+        )
+
+        if response.status_code == 200:
+            print("Success", response.json()["access_token"])
+            settings.set_jwt(response.json()["access_token"])
+        else:
+            self.log_out()

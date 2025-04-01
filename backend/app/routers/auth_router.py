@@ -54,6 +54,16 @@ async def validate_auth_user(
     return UserSchema.model_validate(user, from_attributes=True)
 
 
+@router.get("/refresh")
+async def refresh_token(
+        jwt_token: str = Depends(auth.refresh_token)
+):
+    return TokenSchema(
+        access_token=jwt_token,
+        token_type="Bearer",
+    )
+
+
 @router.post("/sing_in", description="# Получение новой пары jwt пользователя")
 async def sign_in(
     user: UserSchema = Depends(validate_auth_user)

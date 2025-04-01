@@ -19,9 +19,21 @@ def encode_jwt(
         payload: dict,
         private_key: str = jwt_settings.private_key_path.read_text(),
         algorithm: str = jwt_settings.algorithm,
+        expire_minutes: int = jwt_settings.access_token_expires_minutes,
+        expire_timedelta: timedelta | None = None,
 ):
     to_encode = payload.copy()
     now = datetime.now(timezone.utc)
+
+    if expire_timedelta:
+        expire = now + expire_timedelta
+    else:
+        expire = now + timedelta(minutes=expire_minutes)
+
+    to_encode.update(
+        exp=expire,
+        iat=now,
+    )
 
     encoded = jwt.encode(
         to_encode,
@@ -72,6 +84,30 @@ async def get_current_auth_user_token(
         )
     return token.credentials
 
+
+async def refresh_token(
+        token: str = Depends(get_current_auth_user_token),
+        private_key: str = jwt_settings.private_key_path.read_text(),
+        algorithm: str = jwt_settings.algorithm,
+        expire_minutes: int = jwt_settings.access_token_expires_minutes,
+):
+    try:
+        payload = decode_jwt(
+            token=token,
+        )
+        now = datetime.now(timezone.utc)
+        payload['exp'] = now + timedelta(minutes=expire_minutes)
+        await JwtBlackListRepository.add_one(token)
+        return jwt.encode(
+            payload,
+            private_key,
+            algorithm=algorithm,
+        )
+    except InvalidTokenError as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found",
+        )
 
 async def get_current_token_payload_user(
         token: str = Depends(get_current_auth_user_token),
