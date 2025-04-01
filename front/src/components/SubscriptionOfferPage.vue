@@ -26,13 +26,26 @@
 
 <script>
 import ButtonComponent from "./ButtonComponent.vue";
+import {myFetch} from "../assets/myFetch.js";
 
 export default {
   name: "SubscriptionOfferPage",
   components: {ButtonComponent},
   methods: {
     subscribe() {
-      alert("Thank you for subscribing!");
+      myFetch("/auth/subscribe", {method: "POST"})
+          .then(res => {
+            if (res.ok) {
+              return res.json()
+            }
+            return res.json().then(error => {throw new Error(error.detail)})
+          })
+          .then(data => {
+            window.location.href = "/"
+          })
+          .catch(error => {
+            window.alert(error);
+          })
     }
   }
 };

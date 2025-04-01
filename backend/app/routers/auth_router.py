@@ -56,8 +56,10 @@ async def validate_auth_user(
 
 @router.get("/refresh")
 async def refresh_token(
-        jwt_token: str = Depends(auth.refresh_token)
+    user: UserSchema = Depends(auth.get_current_auth_user)
 ):
+    jwt_payload = TokenPayload(**user.model_dump()).model_dump()
+    jwt_token = auth.encode_jwt(jwt_payload)
     return TokenSchema(
         access_token=jwt_token,
         token_type="Bearer",
@@ -85,3 +87,10 @@ async def sign_out(
         "status": "success",
         "detail": "You have successfully logged out.",
     }
+
+
+@router.post("/subscribe")
+async def subscribe(
+        user: UserSchema = Depends(auth.get_current_auth_user)
+):
+    return await UserRepository().set_subscribe(user)

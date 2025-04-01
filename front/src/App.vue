@@ -44,7 +44,7 @@ export default {
               delete this.storage.token_payload
               delete this.storage.token_header
               delete this.storage.token
-              this.navigate("/")
+              window.location.href = "/"
             })
       }
     }
