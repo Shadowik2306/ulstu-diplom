@@ -17,7 +17,7 @@
       <button class="btn sign-up" @click="navigate('/sign_up')">Sign Up</button>
     </div>
     <div class="user-info" v-else @click="sign_out">
-      {{ this.user_info.username }}
+      {{ this.user_info.username }} {{ this.user_info.is_subscribed ? 'SUBSCRIBED' : 'UNSUBSCRIBED' }}
     </div>
   </nav>
 </template>
@@ -73,6 +73,7 @@ export default {
         {name: "New Preset", action: this.create_new_preset, url_name: "preset"},
         {name: "My Presets", action: this.navigate, params: ('/my_presets'), url_name: "my_presets"},
         {name: "Favorites", action: this.navigate, params: ("/favorites"), url_name: "favorites" },
+        {name: "Subscription", action: this.navigate, params: ('/subscription'), url_name: "subscription"},
       ]
     };
   },
@@ -81,10 +82,22 @@ export default {
       window.location.href = path;
     },
     sign_out() {
-      delete this.storage.token_payload
-      delete this.storage.token_header
-      delete this.storage.token
-      this.navigate("/")
+      myFetch("/auth/sing_out", {method: "POST"})
+          .then(res => {
+            if (res.ok) {
+              return res.json()
+            }
+            return res.json().then(error => {throw new Error(error.detail)})
+          })
+          .then(data => {
+            delete this.storage.token_payload
+            delete this.storage.token_header
+            delete this.storage.token
+            this.navigate("/")
+          })
+          .catch(err => {
+            console.log(err)
+          })
     },
     create_new_preset() {
       myFetch(
@@ -108,7 +121,7 @@ export default {
     }
   },
   mounted() {
-    console.log(this.user_info);
+    // console.log(this.user_info);
   }
 }
 </script>

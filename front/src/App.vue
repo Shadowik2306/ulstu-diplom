@@ -2,6 +2,7 @@
 import SampleCreator from "./components/SampleCreator.vue";
 import VerticalNavbar from "./components/VericalNavbar.vue";
 import LikeButton from "./components/LikeButton.vue";
+import {myFetch} from "./assets/myFetch.js";
 
 export default {
   components: {
@@ -20,16 +21,31 @@ export default {
     }
   },
   mounted() {
-    this.update_user_state()
+    this.refresh()
   },
   methods: {
-    update_user_state() {
-      const res = localStorage.getItem('token_payload');
-      if (res === null) {
-        this.user = null;
-      }
-      else {
-        this.user = JSON.parse(res);
+    refresh() {
+      if (this.storage.token) {
+        myFetch("/auth/refresh")
+            .then(res => {
+              if (res.ok) {
+                return res.json()
+              }
+              return res.json().then(error => {throw new Error(error.detail)})
+            })
+            .then(data => {
+              const raw_token = data.access_token
+              this.storage.token = raw_token;
+              this.storage.token_header = window.atob(raw_token.split('.')[0]);
+              this.storage.token_payload = window.atob(raw_token.split('.')[1]);
+            })
+            .catch(err => {
+              console.log(err)
+              delete this.storage.token_payload
+              delete this.storage.token_header
+              delete this.storage.token
+              this.navigate("/")
+            })
       }
     }
   }
@@ -40,7 +56,6 @@ export default {
 <template>
   <div class="app-container">
     <VerticalNavbar class="navbar" ref="nav_bar"
-                    :user_info="this.user_info"
     />
     <div class="content">
       <router-view/>

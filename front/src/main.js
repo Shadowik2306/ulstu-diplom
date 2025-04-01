@@ -9,6 +9,7 @@ import SignUpComponent from "./components/SignUpComponent.vue";
 import ReactiveStorage from "vue-reactive-localstorage";
 import "@fortawesome/fontawesome-free/css/all.css";
 import MainPage from "./components/MainPage.vue";
+import SubscriptionOfferPage from "./components/SubscriptionOfferPage.vue";
 
 
 
@@ -20,6 +21,7 @@ const routes = [
     { path: '/favorites', component: ListOfPresets, props: {favorites: true}, name: 'favorites'},
     { path: '/sign_in', component: SignInComponent, name: 'sign_in' },
     { path: '/sign_up', component: SignUpComponent, name: 'sign_up' },
+    {path: '/subscription', component: SubscriptionOfferPage, name: 'subscriptionOfferPage' },
 ]
 
 const router = createRouter({
