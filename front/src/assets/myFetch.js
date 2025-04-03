@@ -1,4 +1,4 @@
-export const serverUrl = 'http://127.0.0.1:8000';
+export const serverUrl = '/api';
 
 export function myFetch (url, opts) {
     if (opts === undefined) {

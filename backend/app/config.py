@@ -5,17 +5,15 @@ BASE_DIR = Path(__file__).parent.parent
 
 
 class DBSettings(BaseSettings):
-    DB_HOST: str
-    DB_PORT: int
-    DB_USER: str
-    DB_PASS: str
-    DB_NAME: str
+    DB_HOST: str = "db"
+    DB_PORT: int = 5432
+    POSTGRES_USER: str = "postgres"
+    POSTGRES_PASSWORD: str = "postgres"
+    POSTGRES_DB: str = "ulstu_diploma"
 
     @property
     def database_url(self):
-        return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
-
-    model_config = SettingsConfigDict(env_file=BASE_DIR / ".env")
+        return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.POSTGRES_DB}"
 
 
 class AuthJWT(BaseSettings):

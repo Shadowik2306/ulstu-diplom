@@ -23,6 +23,7 @@ app = FastAPI(lifespan=lifespan)
 
 origins = [
     "http://localhost:5173"
+    "http://0.0.0.0:3000"
 ]
 
 app.add_middleware(
@@ -43,7 +44,7 @@ app.include_router(auth_router)
 
 @app.get("/")
 async def main(request: Request):
-    return {"message": "Hello World"}
+    return {"message": "Hello World!!!"}
 
 
 

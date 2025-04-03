@@ -1,13 +1,63 @@
 services:
   db:
     image: postgres
-    expose:
-      - 5432
     ports:
       - 5432:5432
     environment:
-      - DB_HOST=localhost
-      - DB_PORT=5432
       - POSTGRES_DB=ulstu_diploma
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    networks:
+      - dev
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - 80:80
+    volumes:
+      - './nginx.conf:/etc/nginx/nginx.conf'
+    networks:
+      - dev
+    depends_on:
+      - backend
+      - frontend
+
+
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend:/app
+    environment:
+      PYTHONPATH: /app
+    command: >
+        sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    ports:
+      - "8000:8000"
+    networks:
+      - dev
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    volumes:
+      - ./front:/app
+    depends_on:
+      - backend
+    networks:
+      - dev
+    ports:
+      - "3000:3000"
+
+volumes:
+  postgres_data:
+
+networks:
+  dev:

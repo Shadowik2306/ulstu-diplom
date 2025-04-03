@@ -10,7 +10,7 @@ import ReactiveStorage from "vue-reactive-localstorage";
 import "@fortawesome/fontawesome-free/css/all.css";
 import MainPage from "./components/MainPage.vue";
 import SubscriptionOfferPage from "./components/SubscriptionOfferPage.vue";
-
+import cors from "cors"
 
 
 const routes = [
@@ -31,4 +31,4 @@ const router = createRouter({
 })
 
 
-createApp(App).use(router).use(ReactiveStorage, {}).mount('#app')
+createApp(App).use(router).use(ReactiveStorage, {}).use(cors).mount('#app')
