@@ -11,7 +11,7 @@ presets_router = APIRouter(
 )
 
 
-@presets_router.get("/")
+@presets_router.get("")
 async def get_all_presets(
         page: int = Query(ge=1, default=1),
         size: int = Query(ge=1, le=100, default=100),

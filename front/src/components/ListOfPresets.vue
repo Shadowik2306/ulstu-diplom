@@ -63,14 +63,18 @@ export default {
     this.page = this.$route.query.page ? parseInt(this.$route.query.page) : 1
     this.text_req = this.$route.query.text ? this.$route.query.text : ""
 
-    myFetch(url +  new URLSearchParams({
+    let params = {
       page: this.page,
       size: 15,
-      text: this.text_req !== "" ? this.text_req : "",
-    }),).then(res => {
+    }
+
+    if (this.text_req !== "") {
+      params.text = this.text_req
+    }
+
+    myFetch(url +  new URLSearchParams(params)).then(res => {
       return res.json()
     }).then(presets_page => {
-      console.log(presets_page.presets)
       this.presets = presets_page.presets
       this.totalPages = presets_page.total_pages
     })

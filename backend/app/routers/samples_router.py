@@ -15,7 +15,7 @@ router = APIRouter(
 )
 
 
-@router.post("/")
+@router.post("")
 async def create_samples_for_preset(
         preset_id: int,
         sample_req: MusicCreateRequestSchema,
@@ -24,7 +24,7 @@ async def create_samples_for_preset(
     return await SampleRepository.create_many(user, sample_req, preset_id)
 
 
-@router.get("/")
+@router.get("")
 async def get_presets_samples(preset_id: int, connected: bool = False):
     return await SampleRepository.get_all(
         connected=connected,
