@@ -55,7 +55,7 @@ async def get_most_liked_presets():
     return res
 
 
-@presets_router.post("/")
+@presets_router.post("")
 async def create_preset(
         user: UserSchema = Depends(auth.get_current_auth_user),
 ):
@@ -87,12 +87,12 @@ preset_router = APIRouter(
 )
 
 
-@preset_router.get("/")
+@preset_router.get("")
 async def get_preset(preset_id: int) -> PresetAndSamplesSchema:
     return await PresetRepository.get(preset_id)
 
 
-@preset_router.post("/")
+@preset_router.post("")
 async def clone_preset(
         preset_id: int,
         user: UserSchema = Depends(auth.get_current_auth_user),
@@ -100,7 +100,7 @@ async def clone_preset(
     res = await PresetRepository.clone_preset(user, preset_id)
     return res
 
-@preset_router.patch("/")
+@preset_router.patch("")
 async def update_preset(
         preset_id: int,
         preset_update_info: PresetUpdateSchema,
@@ -127,7 +127,7 @@ async def set_liked_preset(
     return res
 
 
-@preset_router.delete("/")
+@preset_router.delete("")
 async def delete_preset(
         preset_id: int,
         user: UserSchema = Depends(auth.get_current_auth_user),

@@ -7,7 +7,9 @@ from app.data.schemas.MusicSchema import MusicCreateRequestSchema
 from app.data.schemas.SampleSchema import SampleCreateSchema, SampleUpdateConnection
 from app.data.schemas.UserSchema import UserSchema
 from app.utils import auth
+from app.utils.celery_app import celery_app
 from app.utils.music_generaion import create_samples, delete_sample_file
+import threading
 
 router = APIRouter(
     prefix="/preset/{preset_id}/samples",
@@ -21,7 +23,8 @@ async def create_samples_for_preset(
         sample_req: MusicCreateRequestSchema,
         user: UserSchema = Depends(auth.get_current_auth_user),
 ):
-    return await SampleRepository.create_many(user, sample_req, preset_id)
+    res = await SampleRepository.create_many(user, sample_req, preset_id)
+    return res
 
 
 @router.get("")
@@ -39,5 +42,5 @@ async def update_sample(sample_id: int, sample_update_indo: SampleUpdateConnecti
 
 @router.delete("/{sample_id}")
 async def delete_sample(sample_id: int):
-    return await SampleRepository.delete(sample_id)
+    return await SampleRepository.remove(sample_id)
 

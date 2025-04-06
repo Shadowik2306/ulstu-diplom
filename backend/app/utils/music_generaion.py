@@ -70,7 +70,8 @@ async def create_samples(
 
 
 async def delete_sample_file(sample_ulr: str):
-    os.remove(static_place / sample_ulr)
+    if Path(static_place / sample_ulr).is_file():
+        os.remove(static_place / sample_ulr)
 
 
 if __name__ == '__main__':

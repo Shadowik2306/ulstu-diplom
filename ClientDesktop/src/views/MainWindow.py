@@ -50,7 +50,6 @@ class MainWindow(QMainWindow):
         )
 
         if response.status_code == 200:
-            print("Success", response.json()["access_token"])
             settings.set_jwt(response.json()["access_token"])
         else:
             self.log_out()

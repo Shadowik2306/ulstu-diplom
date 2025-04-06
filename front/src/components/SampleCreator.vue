@@ -64,7 +64,7 @@ export default {
         if (window.confirm("If you delete full name, you will delete preset. Are you sure?")) {
           console.log("Just joking");
 
-          myFetch(`/preset/${this.$route.params.id}/`, {
+          myFetch(`/preset/${this.$route.params.id}`, {
             method: "DELETE",
           }).then(response => {
             return response.json();
@@ -83,7 +83,7 @@ export default {
         }
       }
 
-      myFetch(`/preset/${this.$route.params.id}/`, {
+      myFetch(`/preset/${this.$route.params.id}`, {
         method: "PATCH",
         headers: {
           'Content-Type': 'application/json'
@@ -120,7 +120,7 @@ export default {
         this.is_loaded = true
         return
       }
-      myFetch(`/preset/${this.$route.params.id}/`
+      myFetch(`/preset/${this.$route.params.id}`
       ).then(response => {
         return response.json();
       }).then(preset => {

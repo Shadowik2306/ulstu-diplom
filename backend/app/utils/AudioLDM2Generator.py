@@ -1,33 +1,52 @@
+import time
 import wave
 from array import array
+from pathlib import Path
 
-import numpy as np
 from diffusers import AudioLDM2Pipeline
 import scipy
 import torch
 
+from app.data.schemas.MusicSchema import MusicCreateRequestSchema, MusicCreateSchema
+from app.data.schemas.SampleSchema import SampleCreateSchema
+
+static_path = Path(__file__).parent.parent.parent / "static"
+
 
 class AudioLDM2Generator:
-    def __init__(self, model_name="cvssp/audioldm2"):
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.pipeline = AudioLDM2Pipeline.from_pretrained(model_name)
-        self.pipeline.to(self.device)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    pipeline = AudioLDM2Pipeline.from_pretrained("cvssp/audioldm2")
+    pipeline.to(device)
 
-    def generate_audio(self, prompt, num_samples=1, output_path="output.wav"):
+    @classmethod
+    def generate_audio(cls, prompt, num_samples=1):
+        samples_name = []
         for i in range(num_samples):
-            result = self.pipeline(
+            result = cls.pipeline(
                 prompt=prompt,
-                audio_length_in_s=5.0,
-                num_inference_steps=50,
-
+                audio_length_in_s=2.0,
+                num_inference_steps=10,
             ).audios[0]
 
             rate = 16000
-            output_file = f"{output_path.split('.')[0]}_{i}.wav"
+            output_file = f"{int(time.time_ns())}.wav"
 
-            scipy.io.wavfile.write(output_file, rate, data=result)
+            scipy.io.wavfile.write(static_path / output_file, rate, data=result)
+            samples_name.append(output_file)
+
+        return samples_name
+
+    @classmethod
+    def create_samples(
+        cls,
+        sample_req: MusicCreateRequestSchema
+    ):
+        samples_name = cls.generate_audio(sample_req.text_request, num_samples=sample_req.count)
+        return samples_name
+
+
 
 
 if __name__ == "__main__":
-    ldm_model = AudioLDM2Generator()
-    ldm_model.generate_audio("City sound")
+    res = AudioLDM2Generator().generate_audio("City sound")
+    print(res)

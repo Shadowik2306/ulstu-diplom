@@ -20,7 +20,7 @@ class PresetModel(CustomBaseModel):
 
     created_at: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now)
 
-    samples: Mapped[list['SampleModel']] = relationship(back_populates='preset', lazy='selectin')
+    samples: Mapped[list['SampleModel']] = relationship(back_populates='preset', lazy='selectin', cascade="all,delete", )
 
 
 class SampleModel(CustomBaseModel):
@@ -90,8 +90,8 @@ class UserRequestsModel(CustomBaseModel):
 class UserFavorites(CustomBaseModel):
     __tablename__ = 'UserFavorites'
 
-    user_id: Mapped[int] = mapped_column(ForeignKey("User.id"), primary_key=True)
-    preset_id: Mapped[int] = mapped_column(ForeignKey("Preset.id"), primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("User.id", ondelete="CASCADE"), primary_key=True)
+    preset_id: Mapped[int] = mapped_column(ForeignKey("Preset.id", ondelete="CASCADE"), primary_key=True)
 
 
 class JwtBlackListModel(CustomBaseModel):

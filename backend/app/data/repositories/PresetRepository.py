@@ -141,7 +141,7 @@ class PresetRepository:
             obj = res.scalar()
 
             if obj:
-                await session.delete(obj)
+                await session.remove(obj)
             else:
                 new_obj = UserFavorites(user_id=user.id, preset_id=preset_id)
                 session.add(new_obj)
@@ -264,6 +264,7 @@ class PresetRepository:
                 )
 
             await session.delete(preset)
+            await session.flush()
             await session.commit()
 
             return PresetSchema.model_validate(preset, from_attributes=True)

@@ -16,7 +16,7 @@ class Settings(BaseSettings):
 
     @property
     def server_url(self):
-        return "http://127.0.0.1:8000"
+        return "https://tinkling.ru/api"
 
     @property
     def jwt_secret_key(self) -> str | None:

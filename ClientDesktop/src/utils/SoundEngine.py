@@ -51,7 +51,5 @@ class SoundEngine:
         outdata[:frames] = res[:, np.newaxis]
 
 
-
-
 def sound_engine_singleton_factory(_object= SoundEngine()):
     return _object

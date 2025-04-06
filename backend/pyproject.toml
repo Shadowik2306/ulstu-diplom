@@ -6,7 +6,7 @@ authors = ["shadowik <zahar.mark@bk.ru>"]
 
 [tool.poetry.dependencies]
 python = "^3.12"
-fastapi = "^0.115.8"
+fastapi = {extras = ["all"], version = "^0.115.12"}
 uvicorn = "^0.34.0"
 alembic = "^1.14.1"
 pydantic-core = "^2.29.0"
@@ -22,6 +22,10 @@ torch = "^2.6.0"
 scipy = "^1.15.2"
 transformers = "^4.49.0"
 accelerate = "^1.4.0"
+celery = [
+    { version = "^5.2.6" },
+    { version = "^5.2.6", extras = ["redis"], optional = true },
+]
 
 
 [build-system]

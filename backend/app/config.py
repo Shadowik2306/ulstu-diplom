@@ -5,7 +5,7 @@ BASE_DIR = Path(__file__).parent.parent
 
 
 class DBSettings(BaseSettings):
-    DB_HOST: str = "db"
+    DB_HOST: str = "localhost"
     DB_PORT: int = 5432
     POSTGRES_USER: str = "postgres"
     POSTGRES_PASSWORD: str = "postgres"

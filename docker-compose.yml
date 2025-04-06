@@ -33,6 +33,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./backend:/app
+    ports:
+      - "8000:8000"
     environment:
       PYTHONPATH: /app
     command: >
@@ -50,6 +52,13 @@ services:
       - ./front:/app
     depends_on:
       - backend
+    networks:
+      - dev
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
     networks:
       - dev
 

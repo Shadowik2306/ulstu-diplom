@@ -1,19 +1,21 @@
-
+import asyncio
 import functools
 from http import HTTPStatus
 
 from sqlalchemy import select, update, delete, func
 from fastapi import HTTPException
+from starlette.concurrency import run_in_threadpool
 
 from app.data.database import async_session_maker
 from app.data.models import SampleModel, PresetModel
-from app.data.repositories.MusicRepository import check_music
+from app.data.repositories.MusicRepository import check_music, MusicRepository
 from app.data.repositories.UserRequestsRepository import UserRequestsRepository, check_user_requests_constraint
-from app.data.schemas.MusicSchema import MusicCreateRequestSchema
+from app.data.schemas.MusicSchema import MusicCreateRequestSchema, MusicCreateSchema
 from app.data.schemas.SampleSchema import SampleSchema, SampleCreateSchema, SampleUpdateConnection
 from app.data.schemas.UserSchema import UserSchema
 
 from app.config import SubscriptionConstraint
+from app.utils.AudioLDM2Generator import AudioLDM2Generator
 
 from app.utils.music_generaion import create_samples
 
@@ -59,6 +61,7 @@ def check_user_sample_constraint():
 
     return wrapper
 
+
 class SampleRepository:
     @classmethod
     async def get(cls, sample_id: int) -> SampleSchema:
@@ -100,14 +103,27 @@ class SampleRepository:
             sample_req: MusicCreateRequestSchema,
             preset_id: int,
     ) -> list[SampleSchema]:
-        res = []
+        new_samples_name: list[SampleCreateSchema] = \
+            await asyncio.to_thread(AudioLDM2Generator().create_samples, sample_req)
 
-        new_samples: list[SampleCreateSchema] = await create_samples(preset_id, sample_req)
+        samples = []
+        for sample_name in new_samples_name:
+            music_model = await MusicRepository().create(MusicCreateSchema(
+                music_url=sample_name
+            ))
+
+            samples.append(SampleCreateSchema(
+                name=f"{sample_req.text_request}",
+                music_id=music_model.id,
+                preset_id=preset_id,
+            ))
+
         await UserRequestsRepository().add_one(user, sample_req)
-        for sample in new_samples:
+        for sample in samples:
             await cls.__create_one(sample)
 
-        return res
+        print(new_samples_name)
+        return []
 
     @classmethod
     async def update_note(cls, sample_id: int, sample_update_info: SampleUpdateConnection) -> SampleSchema:
@@ -121,7 +137,7 @@ class SampleRepository:
 
     @classmethod
     @check_music()
-    async def delete(cls, sample_id: int) -> int:
+    async def remove(cls, sample_id: int) -> int:
         async with async_session_maker() as session:
             query = select(SampleModel).where(sample_id == SampleModel.id)
             res = await session.execute(query)
