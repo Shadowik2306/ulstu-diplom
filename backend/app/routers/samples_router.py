@@ -1,5 +1,6 @@
 from typing import Annotated
 
+from arq.jobs import Job, JobStatus
 from fastapi import APIRouter, Depends
 
 from app.data.repositories.SampleRepository import SampleRepository
@@ -7,9 +8,10 @@ from app.data.schemas.MusicSchema import MusicCreateRequestSchema
 from app.data.schemas.SampleSchema import SampleCreateSchema, SampleUpdateConnection
 from app.data.schemas.UserSchema import UserSchema
 from app.utils import auth
-from app.utils.celery_app import celery_app
 from app.utils.music_generaion import create_samples, delete_sample_file
 import threading
+
+
 
 router = APIRouter(
     prefix="/preset/{preset_id}/samples",
@@ -17,15 +19,23 @@ router = APIRouter(
 )
 
 
+
 @router.post("")
-async def create_samples_for_preset(
+async def create_samples_for_preset_req(
         preset_id: int,
         sample_req: MusicCreateRequestSchema,
         user: UserSchema = Depends(auth.get_current_auth_user),
 ):
-    res = await SampleRepository.create_many(user, sample_req, preset_id)
-    return res
+    from app.main import redis
+    job = await redis.enqueue_job('create_samples_preset', preset_id, sample_req, user)
+    return job.job_id
 
+
+@router.get("/status/{job_id}")
+async def get_sample_req_status(job_id: str):
+    from app.main import redis
+    j = Job(job_id, redis=redis)
+    return await j.status()
 
 @router.get("")
 async def get_presets_samples(preset_id: int, connected: bool = False):

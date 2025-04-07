@@ -22,10 +22,7 @@ torch = "^2.6.0"
 scipy = "^1.15.2"
 transformers = "^4.49.0"
 accelerate = "^1.4.0"
-celery = [
-    { version = "^5.2.6" },
-    { version = "^5.2.6", extras = ["redis"], optional = true },
-]
+arq = "^0.26.3"
 
 
 [build-system]

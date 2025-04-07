@@ -38,7 +38,9 @@ services:
     environment:
       PYTHONPATH: /app
     command: >
-        sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+        sh -c "alembic upgrade head &&
+        (arq app.utils.worker.WorkerSettings &) &&
+        uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
     networks:
       - dev
     depends_on:

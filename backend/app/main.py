@@ -1,5 +1,7 @@
 from contextlib import asynccontextmanager
 
+from arq import create_pool
+from arq.connections import RedisSettings, ArqRedis
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -11,9 +13,12 @@ from app.routers.preset_router import presets_router, preset_router
 from app.routers.samples_router import router as samples_router
 from app.routers.auth_router import router as auth_router
 
+redis: ArqRedis
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    global redis
+    redis = await create_pool(RedisSettings(host="redis"))
     await NoteRepository.initialize_table()
     yield
 
