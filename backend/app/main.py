@@ -13,12 +13,14 @@ from app.routers.preset_router import presets_router, preset_router
 from app.routers.samples_router import router as samples_router
 from app.routers.auth_router import router as auth_router
 
+from app.config import REDIS_HOST
+
 redis: ArqRedis
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global redis
-    redis = await create_pool(RedisSettings(host="redis"))
+    redis = await create_pool(RedisSettings(host=REDIS_HOST))
     await NoteRepository.initialize_table()
     yield
 
@@ -26,8 +28,9 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 origins = [
-    "http://localhost:5173"
-    "http://0.0.0.0:3000"
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://0.0.0.0:3000",
 ]
 
 app.add_middleware(

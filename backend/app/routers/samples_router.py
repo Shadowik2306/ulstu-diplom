@@ -1,5 +1,6 @@
 from typing import Annotated
 
+
 from arq.jobs import Job, JobStatus
 from fastapi import APIRouter, Depends
 
@@ -18,8 +19,6 @@ router = APIRouter(
     tags=["Samples"]
 )
 
-
-
 @router.post("")
 async def create_samples_for_preset_req(
         preset_id: int,
@@ -35,7 +34,18 @@ async def create_samples_for_preset_req(
 async def get_sample_req_status(job_id: str):
     from app.main import redis
     j = Job(job_id, redis=redis)
-    return await j.status()
+
+    # TODO "position": len(await redis.queued_jobs())
+    return {"status": await j.status(),}
+
+
+@router.delete("/status/{job_id}")
+async def abort_sample_req_status(job_id: str):
+    from app.main import redis
+    j = Job(job_id, redis=redis)
+    await j.abort()
+    return {"status": await j.status()}
+
 
 @router.get("")
 async def get_presets_samples(preset_id: int, connected: bool = False):

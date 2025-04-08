@@ -7,9 +7,11 @@ import {myFetch, serverUrl} from "../assets/myFetch.js";
 import TextCloud from "./TextCloud.vue";
 import LikeButton from "./LikeButton.vue";
 import AddButton from "./AddButton.vue";
+import LoadingSpinner from "./SpinnerComponent.vue";
 
 export default {
   components: {
+    LoadingSpinner,
     AddButton,
     LikeButton, TextCloud, ButtonComponent, InputComponent: SearchComponent, MusicPlayer, NoteContainer},
   data(){
@@ -32,10 +34,11 @@ export default {
       request_text: "",
       preset_name: "",
       preset_creator: 0,
-      is_loaded: false,
+      is_inited: false,
       editable: false,
       is_liked: false,
-      is_user_connected: false
+      is_user_connected: false,
+      isWaiting: null
     }
   },
   validations: {
@@ -59,7 +62,7 @@ export default {
   },
   watch: {
     preset_name(newVal, oldVal) {
-      if (!this.is_loaded) return;
+      if (!this.is_inited) return;
       if (newVal === "") {
         if (window.confirm("If you delete full name, you will delete preset. Are you sure?")) {
           console.log("Just joking");
@@ -117,7 +120,7 @@ export default {
     },
     get_preset() {
       if (this.$route.params.id === 0) {
-        this.is_loaded = true
+        this.is_inited = true
         return
       }
       myFetch(`/preset/${this.$route.params.id}`
@@ -150,10 +153,56 @@ export default {
           })
         }
       }).then(() => {
-        this.is_loaded = true
+        this.is_inited = true
       })
     },
+    async abort_sample(job_id) {
+      myFetch(`/preset/${this.$route.params.id}/samples/status/${job_id}`, {method: "DELETE"}
+      ).then(response => {
+        if (response.ok) {
+          return response.json()
+        }
+        return response.json().then(error => {throw new Error(error.detail)})
+      }).then(data => {
+        console.log("ITS ME JOHNY")
+        console.log(data)
+      }).catch(error => {
+        console.warn(error)
+        window.alert(error)
+      })
+    },
+    async beforeUnloadAction(ev) {
+      await this.abort_sample(this.isWaiting)
+    },
+    wait_for_response(Job_id) {
+      this.isWaiting = Job_id
+      let vr = this;
+
+      window.addEventListener('beforeunload', this.beforeUnloadAction)
+
+
+      const interval = setInterval(() => {
+        myFetch(`/preset/${this.$route.params.id}/samples/status/${Job_id}`)
+            .then(response => {
+              if (response.ok) {
+                return response.json();
+              }
+              return response.json().then(error => {throw new Error(error.detail)})
+            }).then(data => {
+              if (data.status === "complete") {
+                this.get_preset();
+                this.isWaiting = null;
+                clearInterval(interval)
+                window.removeEventListener("beforeunload", this.beforeUnloadAction);
+              }
+            }).catch(error => {
+              console.warn(error)
+              window.alert(error)
+            })
+      }, 10000)
+    },
     create_samples() {
+      if (this.isWaiting !== null) return;
       if (this.$route.params.id === 0) {
         return
       }
@@ -177,8 +226,7 @@ export default {
           return response.json().then(error => {throw new Error(error.detail)})
         }
       }).then(data => {
-        console.log(data)
-        this.get_preset()
+        this.wait_for_response(data)
       }).catch(error => {
         console.warn(error)
         window.alert(error)
@@ -244,11 +292,12 @@ export default {
   },
   created() {
     this.get_preset()
-  }
+  },
 }
 </script>
 <template>
-  <div class="constructor" v-if="is_loaded">
+  <loading-spinner :visible="isWaiting !== null" />
+  <div class="constructor" v-if="is_inited">
     <div class="request-area">
       <div class="name-and-search" v-if="editable">
         <InputComponent class="name"
@@ -313,6 +362,7 @@ export default {
     <div v-else class="notes-container">
       <NoteContainer v-for="note in this.notes_info" :note_object="note" :color="note.color" :editable="false"/>
     </div>
+
   </div>
 </template>
 
