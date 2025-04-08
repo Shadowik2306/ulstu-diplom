@@ -28,6 +28,7 @@ class WorkerSettings:
     functions = [create_samples_preset]
     redis_settings = REDIS_SETTINGS
     max_jobs = 5
+    allow_abort_jobs = True
 
 
 

@@ -97,6 +97,17 @@ class SampleRepository:
     @classmethod
     @check_user_requests_constraint()
     @check_user_sample_constraint()
+    async def check_generation_constraint(
+            cls,
+            user: UserSchema,
+            sample_req: MusicCreateRequestSchema,
+            preset_id: int,):
+        await UserRequestsRepository().add_one(user, sample_req)
+        return True
+
+    @classmethod
+    @check_user_requests_constraint()
+    @check_user_sample_constraint()
     async def create_many(
             cls,
             user: UserSchema,
@@ -118,7 +129,6 @@ class SampleRepository:
                 preset_id=preset_id,
             ))
 
-        await UserRequestsRepository().add_one(user, sample_req)
         for sample in samples:
             await cls.__create_one(sample)
 

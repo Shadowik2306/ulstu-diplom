@@ -26,6 +26,7 @@ async def create_samples_for_preset_req(
         user: UserSchema = Depends(auth.get_current_auth_user),
 ):
     from app.main import redis
+    await SampleRepository.check_generation_constraint(user, sample_req, preset_id)
     job = await redis.enqueue_job('create_samples_preset', preset_id, sample_req, user)
     return job.job_id
 
@@ -35,8 +36,7 @@ async def get_sample_req_status(job_id: str):
     from app.main import redis
     j = Job(job_id, redis=redis)
 
-    # TODO "position": len(await redis.queued_jobs())
-    return {"status": await j.status(),}
+    return {"status": await j.status()}
 
 
 @router.delete("/status/{job_id}")
