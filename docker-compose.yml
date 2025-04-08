@@ -25,8 +25,6 @@ services:
       - backend
       - frontend
 
-
-
   backend:
     build:
       context: ./backend
@@ -35,12 +33,14 @@ services:
       - ./backend:/app
     ports:
       - "8000:8000"
+    expose:
+      - "8000"
     environment:
       PYTHONPATH: /app
     command: >
-        sh -c "alembic upgrade head &&
-        (arq app.utils.worker.WorkerSettings &) &&
-        uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+      sh -c "alembic upgrade head && \
+      (arq app.utils.worker.WorkerSettings &) && \
+      uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
     networks:
       - dev
     depends_on:
