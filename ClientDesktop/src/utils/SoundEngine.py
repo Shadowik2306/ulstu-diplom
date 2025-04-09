@@ -48,7 +48,7 @@ class SoundEngine:
                 del self.sound_state[(midi_channel, note)]
                 continue
 
-        outdata[:frames] = res[:, np.newaxis]
+        outdata[:14] = res[:, np.newaxis]
 
 
 def sound_engine_singleton_factory(_object= SoundEngine()):

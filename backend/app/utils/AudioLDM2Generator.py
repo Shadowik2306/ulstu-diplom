@@ -25,7 +25,7 @@ class AudioLDM2Generator:
             result = cls.pipeline(
                 prompt=prompt,
                 audio_length_in_s=2.0,
-                num_inference_steps=50,
+                num_inference_steps=10,
             ).audios[0]
 
             rate = 16000
