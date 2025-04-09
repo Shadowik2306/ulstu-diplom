@@ -8,5 +8,13 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 COPY ./requirements.txt /app/
-
 RUN pip install -r requirements.txt --break-system-packages
+
+COPY ./app/setup_audio_ldm.py /app/setup_audio_ldm.py
+RUN python /app/setup_audio_ldm.py
+
+COPY ./app /app
+
+EXPOSE 8000
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

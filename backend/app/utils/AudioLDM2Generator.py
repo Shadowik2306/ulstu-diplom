@@ -25,7 +25,7 @@ class AudioLDM2Generator:
             result = cls.pipeline(
                 prompt=prompt,
                 audio_length_in_s=2.0,
-                num_inference_steps=10,
+                num_inference_steps=50,
             ).audios[0]
 
             rate = 16000
@@ -43,10 +43,3 @@ class AudioLDM2Generator:
     ):
         samples_name = cls.generate_audio(sample_req.text_request, num_samples=sample_req.count)
         return samples_name
-
-
-
-
-if __name__ == "__main__":
-    res = AudioLDM2Generator().generate_audio("City sound")
-    print(res)
