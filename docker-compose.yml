@@ -28,7 +28,7 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile_No_CUDA
+      dockerfile: Dockerfile
     volumes:
       - ./backend:/app
     ports:
