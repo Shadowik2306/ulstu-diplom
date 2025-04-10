@@ -1,7 +1,7 @@
 <template>
-  <button :class="{ liked: initial_liked }" @click="toggleLike">
-    <i :class="initial_liked ? 'fas fa-heart' : 'far fa-heart'"></i>
-  </button>
+    <button :class="{ liked: initial_liked }" @click="toggleLike">
+      <i :class="initial_liked ? 'fas fa-heart' : 'far fa-heart'"></i>
+    </button>
 </template>
 
 <script>

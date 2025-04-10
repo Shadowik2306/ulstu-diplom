@@ -12,20 +12,24 @@ from app.data.schemas.SampleSchema import SampleCreateSchema
 
 static_path = Path(__file__).parent.parent.parent / "static"
 
-
 class AudioLDM2Generator:
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    pipeline = AudioLDM2Pipeline.from_pretrained("cvssp/audioldm2")
+    if torch.cuda.is_available():
+        pipeline = AudioLDM2Pipeline.from_pretrained("cvssp/audioldm2", torch_dtype=torch.float16)
+    else:
+        pipeline = AudioLDM2Pipeline.from_pretrained("cvssp/audioldm2")
     pipeline.to(device)
 
     @classmethod
-    def generate_audio(cls, prompt, num_samples=1):
+    def generate_audio(cls, sample_req: MusicCreateRequestSchema):
         samples_name = []
-        for i in range(num_samples):
+        for i in range(sample_req.count):
             result = cls.pipeline(
-                prompt=prompt,
-                audio_length_in_s=2.0,
-                num_inference_steps=50,
+                prompt=sample_req.text_request,
+                negative_prompt=sample_req.negative_prompt,
+                audio_length_in_s=sample_req.audio_length_in_s,
+                num_inference_steps=sample_req.num_inference_steps,
+                num_waveforms_per_prompt=sample_req.num_waveforms_per_prompt,
             ).audios[0]
 
             rate = 16000
@@ -34,12 +38,4 @@ class AudioLDM2Generator:
             scipy.io.wavfile.write(static_path / output_file, rate, data=result)
             samples_name.append(output_file)
 
-        return samples_name
-
-    @classmethod
-    def create_samples(
-        cls,
-        sample_req: MusicCreateRequestSchema
-    ):
-        samples_name = cls.generate_audio(sample_req.text_request, num_samples=sample_req.count)
         return samples_name

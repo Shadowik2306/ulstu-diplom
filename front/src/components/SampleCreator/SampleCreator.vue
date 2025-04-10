@@ -1,19 +1,23 @@
 <script>
-import MusicPlayer from "./MusicPlayer/MusicPlayer.vue";
-import NoteContainer from "./NoteContainer.vue";
-import SearchComponent from "./InputComponent.vue";
-import ButtonComponent from "./ButtonComponent.vue";
-import {myFetch, serverUrl} from "../assets/myFetch.js";
-import TextCloud from "./TextCloud.vue";
+import MusicPlayer from "../MusicPlayer/MusicPlayer.vue";
+import NoteContainer from "../NoteContainer.vue";
+import SearchComponent from "../InputComponent.vue";
+import ButtonComponent from "../ButtonComponent.vue";
+import {myFetch, serverUrl} from "../../assets/myFetch.js";
+import TextCloud from "../TextCloud.vue";
 import LikeButton from "./LikeButton.vue";
 import AddButton from "./AddButton.vue";
 import LoadingSpinner from "./SpinnerComponent.vue";
+import InputComponent from "../InputComponent.vue";
+import SettingsConfig from "./SettingsConfig.vue";
 
 export default {
   components: {
     LoadingSpinner,
     AddButton,
-    LikeButton, TextCloud, ButtonComponent, InputComponent: SearchComponent, MusicPlayer, NoteContainer},
+    LikeButton, TextCloud, ButtonComponent,
+    InputComponent, SearchComponent, MusicPlayer,
+    NoteContainer, SettingsConfig},
   data(){
     return {
       notes_data: [
@@ -38,7 +42,16 @@ export default {
       editable: false,
       is_liked: false,
       is_user_connected: false,
-      isWaiting: null
+      isWaiting: null,
+
+      settings: {
+        negative_prompt: "Low quality.",
+        audio_length_in_s: 5,
+        num_inference_steps: 200,
+        num_waveforms_per_prompt: 3,
+        count: 1,
+      }
+
     }
   },
   validations: {
@@ -215,8 +228,12 @@ export default {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          'text_request': this.request_text,
-          'count': 1
+          text_request: this.request_text,
+          negative_prompt: this.settings.negative_prompt,
+          audio_length_in_s: this.settings.audio_length_in_s,
+          num_inference_steps: this.settings.num_inference_steps,
+          num_waveforms_per_prompt: this.settings.num_waveforms_per_prompt,
+          count: this.settings.count,
         })
       }).then(response => {
         if (response.ok) {
@@ -288,6 +305,10 @@ export default {
       }).catch(error => {
         window.alert(error)
       })
+    },
+    new_settings(settingsData) {
+      this.settings = settingsData;
+      console.log('Received settings:', settingsData);
     }
   },
   created() {
@@ -314,11 +335,12 @@ export default {
             :initial_liked="this.is_liked"
             @like="like_preset"
         />
-
+        <SettingsConfig @submit="new_settings"/>
       </div>
       <div v-else class="preset-name">
         <TextCloud :text="this.preset_name"></TextCloud>
         <LikeButton
+            v-if="is_user_connected"
             :initial_liked="this.is_liked"
             @like="like_preset"
         />
@@ -327,42 +349,55 @@ export default {
       <div class="generate-button-container" v-if="editable">
         <ButtonComponent label="Generate" class="button" @click="this.create_samples"/>
       </div>
-      <div>
-
-      </div>
     </div>
     <div v-if="editable" class="constructor-area">
       <div class="notes-part">
-        <NoteContainer v-for="note in this.notes_info" :note_object="note" :color="note.color"
-                       @drop="onDrop($event, note.id)"
-                       @dragenter.prevent
-                       @dragover.prevent
-                       @delete="this.delete_sample"
-
-        />
+        <div class="notes-scrollable">
+          <div class="gap" v-for="note in this.notes_info">
+            <NoteContainer
+                :note_object="note"
+                :color="note.color"
+                @drop="onDrop($event, note.id)"
+                @dragenter.prevent
+                @dragover.prevent
+                @delete="this.delete_sample"
+            />
+          </div>
+        </div>
       </div>
-      <div class="music-list-group"
-           @drop="onDrop($event, -1)"
-           @dragenter.prevent
-           @dragover.prevent
-      >
-        <MusicPlayer v-for="music in this.unused_music"
-                     :music_data="music"
-                     draggable="true"
-                     @delete="this.delete_sample"
-        />
-        <TextCloud
-            v-if="this.unused_music.length === 0"
-            text="Any free tinkling."
-            border="dashed 1px black"
-            style="margin-top: 30px "
-        />
+      <div class="music-list-group">
+        <div class="music-scrollable"
+             @drop="onDrop($event, -1)"
+             @dragenter.prevent
+             @dragover.prevent>
+          <div class="gap" v-for="music in this.unused_music">
+            <MusicPlayer
+                :music_data="music"
+                draggable="true"
+                @delete="this.delete_sample"
+            />
+          </div>
+          <TextCloud
+              v-if="this.unused_music.length === 0"
+              text="Any free tinkling."
+              border="dashed 1px black"
+              style="margin-top: 30px "
+          />
+        </div>
       </div>
     </div>
     <div v-else class="notes-container">
-      <NoteContainer v-for="note in this.notes_info" :note_object="note" :color="note.color" :editable="false"/>
-    </div>
+      <div class="gap"
+           v-for="note in this.notes_info"
+      >
+        <NoteContainer
+            :note_object="note"
+            :color="note.color"
+            :editable="false"
+        />
+      </div>
 
+    </div>
   </div>
 </template>
 
@@ -372,6 +407,42 @@ export default {
   flex-direction: column;
   gap: 1vh;
   height: 100vh;
+  overflow: hidden; /* Prevent the entire page from scrolling */
+}
+
+.request-area {
+  display: flex;
+  flex-direction: column;
+  gap: 2vh;
+}
+
+.constructor-area {
+  display: flex;
+  justify-content: space-between;
+  height: 100%; /* Make sure this div takes the available space */
+}
+
+.notes-part {
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+}
+
+.music-list-group {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 1vh;
+}
+
+.notes-scrollable {
+  overflow-y: auto;
+  height: calc(100vh - 150px);
+}
+
+.music-scrollable {
+  overflow-y: auto;
+  height: calc(100vh - 150px);
 }
 
 .generate-button-container {
@@ -394,20 +465,9 @@ export default {
   width: 25%;
 }
 
-.request-area {
-  display: flex;
-  flex-direction: column;
-  gap: 2vh;
-}
-
 .preset-name {
   display: flex;
   gap: 1vh;
-}
-
-.request-area .button {
-  width: 30%;
-  align-self: center;
 }
 
 .constructor-area {
@@ -422,20 +482,11 @@ export default {
   gap: 1vh;
 }
 
-.notes-part {
-  display: flex;
-  flex-direction: column;
-  width: 40%;
-  gap: 2vh;
+.gap {
+  margin-top: 1vh;
 }
 
-
-.music-list-group {
-  width: 40%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2vh;
+.button {
+  width: 50%;
 }
 </style>

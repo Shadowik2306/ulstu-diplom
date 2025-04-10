@@ -1,7 +1,7 @@
 <script>
-import SampleCreator from "./components/SampleCreator.vue";
+import SampleCreator from "./components/SampleCreator/SampleCreator.vue";
 import VerticalNavbar from "./components/VericalNavbar.vue";
-import LikeButton from "./components/LikeButton.vue";
+import LikeButton from "./components/SampleCreator/LikeButton.vue";
 import {myFetch} from "./assets/myFetch.js";
 
 export default {
@@ -55,8 +55,7 @@ export default {
 
 <template>
   <div class="app-container">
-    <VerticalNavbar class="navbar" ref="nav_bar"
-    />
+    <VerticalNavbar class="navbar" ref="nav_bar"/>
     <div class="content">
       <router-view/>
     </div>
@@ -75,9 +74,9 @@ export default {
 }
 
 .content {
-  width: calc(100% - 230px);
-  padding: 20px; /* Adds some padding for content */
-  margin-left: 250px;
+  width: calc(90% - 230px);
+  margin-left: 325px;
+  margin-top: 1vh;
 }
 
 @font-face {
@@ -89,4 +88,6 @@ export default {
   font-family: "golos-text", serif;
   color: #fff
 }
+
+
 </style>

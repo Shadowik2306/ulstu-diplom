@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
 import {createRouter, createWebHistory} from 'vue-router'
-import SampleCreator from "./components/SampleCreator.vue";
+import SampleCreator from "./components/SampleCreator/SampleCreator.vue";
 import ListOfPresets from "./components/ListOfPresets.vue";
 import SignInComponent from "./components/SignInComponent.vue";
 import SignUpComponent from "./components/SignUpComponent.vue";

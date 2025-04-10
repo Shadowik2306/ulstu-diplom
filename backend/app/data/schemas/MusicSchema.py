@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class MusicSchema(BaseModel):
@@ -8,7 +8,11 @@ class MusicSchema(BaseModel):
 
 class MusicCreateRequestSchema(BaseModel):
     text_request: str
-    count: int
+    negative_prompt: str = Field(default="Low quality.")
+    audio_length_in_s: int = Field(default=5)
+    num_inference_steps: int = Field(default=200)
+    num_waveforms_per_prompt: int = Field(default=3)
+    count: int = Field(default=1)
 
 
 class MusicCreateSchema(BaseModel):

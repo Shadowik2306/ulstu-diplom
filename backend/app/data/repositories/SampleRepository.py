@@ -115,7 +115,7 @@ class SampleRepository:
             preset_id: int,
     ) -> list[SampleSchema]:
         new_samples_name: list[SampleCreateSchema] = \
-            await asyncio.to_thread(AudioLDM2Generator().create_samples, sample_req)
+            await asyncio.to_thread(AudioLDM2Generator().generate_audio, sample_req)
 
         samples = []
         for sample_name in new_samples_name:

@@ -141,7 +141,7 @@ class PresetRepository:
             obj = res.scalar()
 
             if obj:
-                await session.remove(obj)
+                await session.delete(obj)
             else:
                 new_obj = UserFavorites(user_id=user.id, preset_id=preset_id)
                 session.add(new_obj)
