@@ -12,8 +12,6 @@ from app.utils import auth
 from app.utils.music_generaion import create_samples, delete_sample_file
 import threading
 
-
-
 router = APIRouter(
     prefix="/preset/{preset_id}/samples",
     tags=["Samples"]
@@ -27,7 +25,7 @@ async def create_samples_for_preset_req(
 ):
     from app.main import redis
     await SampleRepository.check_generation_constraint(user, sample_req, preset_id)
-
+    sample_req.count = 1
     job = await redis.enqueue_job('create_samples_preset', preset_id, sample_req, user)
     return job.job_id
 
