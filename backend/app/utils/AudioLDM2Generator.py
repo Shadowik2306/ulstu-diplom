@@ -24,7 +24,7 @@ class AudioLDM2Generator:
     @classmethod
     def generate_audio(cls, sample_req: MusicCreateRequestSchema):
         result = cls.pipeline(
-            prompt=sample_req.count,
+            prompt=sample_req.text_request,
             negative_prompt=sample_req.negative_prompt,
             audio_length_in_s=sample_req.audio_length_in_s,
             num_inference_steps=sample_req.num_inference_steps,
