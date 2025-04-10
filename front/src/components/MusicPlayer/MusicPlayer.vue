@@ -1,5 +1,4 @@
 <template>
-
     <div class="player-container"
          draggable="true"
          @dragstart="startDrag($event, music_data)"
@@ -8,7 +7,7 @@
         <MusicPlayerName :text="this.music_data.name"/>
       </div>
       <div class="music-player">
-        <audio ref="audio" :src="this.music_data.music_url" preload="metadata"></audio>
+        <audio ref="audio" :src="this.music_data.music_url"></audio>
         <div class="player">
           <MusicPlayerPlayButton class="play-button" v-model="is_playing" @toggle="playMusic"/>
           <MusicPlayerScroller class="scroller" v-model="music_place" :duration="duration" :is_playing="is_playing"/>

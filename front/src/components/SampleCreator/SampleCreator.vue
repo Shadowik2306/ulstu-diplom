@@ -108,7 +108,6 @@ export default {
           'name': newVal
         })
       })
-      console.log(newVal)
     }
   },
   methods: {
@@ -308,7 +307,6 @@ export default {
     },
     new_settings(settingsData) {
       this.settings = settingsData;
-      console.log('Received settings:', settingsData);
     }
   },
   created() {
@@ -438,11 +436,13 @@ export default {
 .notes-scrollable {
   overflow-y: auto;
   height: calc(100vh - 150px);
+  scrollbar-width: none;
 }
 
 .music-scrollable {
   overflow-y: auto;
   height: calc(100vh - 150px);
+  scrollbar-width: none;
 }
 
 .generate-button-container {

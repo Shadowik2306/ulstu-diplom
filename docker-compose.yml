@@ -28,7 +28,7 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile_No_CUDA
+      dockerfile: Dockerfile
     volumes:
       - ./backend:/app
     ports:
@@ -45,13 +45,13 @@ services:
       - dev
     depends_on:
       - db
-#    deploy:
-#      resources:
-#        reservations:
-#          devices:
-#            - driver: nvidia
-#              count: 1
-#              capabilities: [ gpu ]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [ gpu ]
 
   frontend:
     build:

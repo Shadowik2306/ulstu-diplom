@@ -114,26 +114,23 @@ class SampleRepository:
             sample_req: MusicCreateRequestSchema,
             preset_id: int,
     ) -> list[SampleSchema]:
-        new_samples_name: list[SampleCreateSchema] = \
-            await asyncio.to_thread(AudioLDM2Generator().generate_audio, sample_req)
+        new_sample_name: list[str] = []
+        for i in range(sample_req.count):
+            new_sample_name.append(await asyncio.to_thread(AudioLDM2Generator().generate_audio, sample_req))
 
-        samples = []
-        for sample_name in new_samples_name:
-            music_model = await MusicRepository().create(MusicCreateSchema(
-                music_url=sample_name
-            ))
+        music_model = await MusicRepository().create(MusicCreateSchema(
+            music_url=new_sample_name
+        ))
 
-            samples.append(SampleCreateSchema(
-                name=f"{sample_req.text_request}",
-                music_id=music_model.id,
-                preset_id=preset_id,
-            ))
+        sample = SampleCreateSchema(
+            name=f"{sample_req.text_request}",
+            music_id=music_model.id,
+            preset_id=preset_id,
+        )
 
-        for sample in samples:
-            await cls.__create_one(sample)
+        await cls.__create_one(sample)
 
-        print(new_samples_name)
-        return []
+        return
 
     @classmethod
     async def update_note(cls, sample_id: int, sample_update_info: SampleUpdateConnection) -> SampleSchema:

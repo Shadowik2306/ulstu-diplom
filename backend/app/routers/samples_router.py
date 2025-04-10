@@ -27,6 +27,7 @@ async def create_samples_for_preset_req(
 ):
     from app.main import redis
     await SampleRepository.check_generation_constraint(user, sample_req, preset_id)
+
     job = await redis.enqueue_job('create_samples_preset', preset_id, sample_req, user)
     return job.job_id
 
