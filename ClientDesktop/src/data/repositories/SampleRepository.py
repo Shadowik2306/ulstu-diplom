@@ -21,7 +21,7 @@ def parse_sample(sample_file_name):
     file = sf.SoundFile(sample_file_name)
 
     file_freq = sf.read(sample_file_name, dtype='float32')[0]
-    chunk_size = 14
+    chunk_size = 15
     num_chunks = len(file_freq) // chunk_size + (len(file_freq) % chunk_size != 0)
 
     chunks = np.array_split(file_freq, num_chunks)

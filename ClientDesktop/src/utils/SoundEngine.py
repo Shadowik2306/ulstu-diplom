@@ -37,7 +37,7 @@ class SoundEngine:
         if status:
             print(status)
 
-        res = np.zeros((14, ), dtype=np.float32)
+        res = np.zeros((15, ), dtype=np.float32)
         saved_sound_state = dict(self.sound_state).items()
         for (midi_channel, note), data in saved_sound_state:
             try:
@@ -48,7 +48,7 @@ class SoundEngine:
                 del self.sound_state[(midi_channel, note)]
                 continue
 
-        outdata[:14] = res[:, np.newaxis]
+        outdata[:frames] = res[:, np.newaxis]
 
 
 def sound_engine_singleton_factory(_object= SoundEngine()):

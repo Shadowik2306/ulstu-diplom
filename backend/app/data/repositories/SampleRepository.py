@@ -132,7 +132,6 @@ class SampleRepository:
         for sample in samples:
             await cls.__create_one(sample)
 
-        print(new_samples_name)
         return []
 
     @classmethod
