@@ -18,7 +18,7 @@ jobs:
         spec: ClientDesktop/Tinkling.spec
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: pyinstaller-dist
         path: dist/
@@ -35,7 +35,7 @@ jobs:
           spec: ClientDesktop/Tinkling.spec
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pyinstaller-dist
           path: dist/
@@ -52,7 +52,7 @@ jobs:
           spec: ClientDesktop/Tinkling.spec
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pyinstaller-dist
           path: dist/
