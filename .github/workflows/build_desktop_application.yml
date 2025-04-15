@@ -16,7 +16,12 @@ jobs:
       uses: sayyid5416/pyinstaller@v1
       with:
         spec: ClientDesktop/Tinkling.spec
-        options: --name "Tinkling_WIN"
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: pyinstaller-dist
+        path: dist/
 
   pyinstaller-macos-arm-build:
     runs-on: macos-latest
@@ -28,7 +33,12 @@ jobs:
         uses: sayyid5416/pyinstaller@v1
         with:
           spec: ClientDesktop/Tinkling.spec
-          options: --name "Tinkling_Mac_ARM"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: pyinstaller-dist
+          path: dist/
 
   pyinstaller-macos-intel-build:
     runs-on: macos-13
@@ -40,4 +50,47 @@ jobs:
         uses: sayyid5416/pyinstaller@v1
         with:
           spec: ClientDesktop/Tinkling.spec
-          options: --name "Tinkling_Mac_ARM"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: pyinstaller-dist
+          path: dist/
+
+#  pre-release:
+#    runs-on: ubuntu-latest
+#    needs:
+#      - pyinstaller-windows-build
+#      - pyinstaller-macos-intel-build
+#
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v4
+#
+#      - name: Get previous tag
+#        id: previoustag
+#        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+#
+#      - name: Calculate new tag
+#        id: newtag
+#        run: |
+#          if [ "${{ steps.previoustag.outputs.tag }}" == "" ]; then
+#            echo "TAG_NAME=v0.0.0" >> $GITHUB_OUTPUT
+#          else
+#            echo "TAG_NAME=${{ steps.previoustag.outputs.tag }}" | awk -F. -v OFS=. '{$NF += 1 ; print}' >> "$GITHUB_OUTPUT"
+#          fi
+#
+#      - name: Get Artifacts
+#        uses: actions/download-artifact@v4
+#        with:
+#          path: assets/
+#
+#      - run: ls assets/
+#
+##      - name: Release
+##        uses: "marvinpinto/action-automatic-releases@latest"
+##        with:
+##          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+##          automatic_release_tag: "${{ steps.newtag.outputs.TAG_NAME }}"
+##          title: "Release ${{ steps.newtag.outputs.TAG_NAME }}"
+##          prerelease: true
