@@ -15,30 +15,15 @@ jobs:
     - name: Create Executable
       uses: sayyid5416/pyinstaller@v1
       with:
+        requirements: ClientDesktop/requirements.txt
         spec: ClientDesktop/Tinkling.spec
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: pyinstaller-dist
+        name: pyinstaller-windows-dist
         path: dist/
 
-  pyinstaller-macos-arm-build:
-    runs-on: macos-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Create Executable
-        uses: sayyid5416/pyinstaller@v1
-        with:
-          spec: ClientDesktop/Tinkling.spec
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: pyinstaller-dist
-          path: dist/
 
   pyinstaller-macos-intel-build:
     runs-on: macos-13
@@ -49,12 +34,13 @@ jobs:
       - name: Create Executable
         uses: sayyid5416/pyinstaller@v1
         with:
+          requirements: ClientDesktop/requirements.txt
           spec: ClientDesktop/Tinkling.spec
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: pyinstaller-dist
+          name: pyinstaller-mac-intel-dist
           path: dist/
 
 #  pre-release:
