@@ -62,19 +62,6 @@
               />
               <small>{{ num_waveforms_per_prompt }} waveform(s)</small>
             </div>
-
-            <div class="form-group">
-              <label for="count">Count</label>
-              <select class="form-control" id="count" v-model="count">
-                <option
-                    v-for="option in validCounts"
-                    :key="option"
-                    :value="option"
-                >
-                  {{ option }}
-                </option>
-              </select>
-            </div>
           </form>
         </div>
         <div class="modal-footer">

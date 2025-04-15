@@ -384,15 +384,17 @@ export default {
         </div>
       </div>
     </div>
-    <div v-else class="notes-container">
-      <div class="gap"
-           v-for="note in this.notes_info"
-      >
-        <NoteContainer
-            :note_object="note"
-            :color="note.color"
-            :editable="false"
-        />
+    <div v-else class="notes-scrollable">
+      <div class="notes-container">
+        <div class="gap"
+             v-for="note in this.notes_info"
+        >
+          <NoteContainer
+              :note_object="note"
+              :color="note.color"
+              :editable="false"
+          />
+        </div>
       </div>
 
     </div>

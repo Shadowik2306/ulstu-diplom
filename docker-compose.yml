@@ -63,13 +63,6 @@ services:
       - backend
     networks:
       - dev
-    develop:
-      watch:
-        - action: sync+restart
-          path: front
-          target: /web/frontend
-          ignore:
-            - node_modules
 
   redis:
     image: redis:latest
