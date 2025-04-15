@@ -11,6 +11,7 @@ import "@fortawesome/fontawesome-free/css/all.css";
 import MainPage from "./components/MainPage.vue";
 import SubscriptionOfferPage from "./components/SubscriptionOfferPage.vue";
 import cors from "cors"
+import DownloadDesktopPage from "./components/DownloadDesktopPage.vue";
 
 
 const routes = [
@@ -22,6 +23,7 @@ const routes = [
     { path: '/sign_in', component: SignInComponent, name: 'sign_in' },
     { path: '/sign_up', component: SignUpComponent, name: 'sign_up' },
     {path: '/subscription', component: SubscriptionOfferPage, name: 'subscriptionOfferPage' },
+    { path: '/desktop', component: DownloadDesktopPage, name: 'download_desktop' },
 ]
 
 const router = createRouter({

@@ -68,6 +68,7 @@ export default {
     return {
       public_nav_items: [
         { name: 'All Presets', action: this.navigate, params: ('/presets'), url_name: "presets" },
+        { name: "Desktop App", action: this.navigate, params: ('/desktop'), url_name: "desktop" },
       ],
       private_nav_items: [
         {name: "New Preset", action: this.create_new_preset, url_name: "preset"},
