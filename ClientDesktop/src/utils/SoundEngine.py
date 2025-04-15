@@ -26,7 +26,7 @@ class SoundEngine:
             return
         if (midi_channel_id, note) in self.sound_state:
             return
-        self.sound_state[(midi_channel_id, note)] = iter(data)
+        self.sound_state[(midi_channel_id, note)] = data
 
     def remove_sound(self, midi_channel_id, note):
         if (midi_channel_id, note) not in self.sound_state:
@@ -37,15 +37,21 @@ class SoundEngine:
         if status:
             print(status)
 
-        res = np.zeros((15, ), dtype=np.float32)
-        saved_sound_state = dict(self.sound_state).items()
-        for (midi_channel, note), data in saved_sound_state:
+        res = np.zeros((frames, ), dtype=np.float32)
+        saved_sound_state_keys = dict(self.sound_state).keys()
+        for key in saved_sound_state_keys:
             try:
-                volume = self.midi_channel_volumes[midi_channel] / 100
-                state = next(data) * volume
+                volume = self.midi_channel_volumes[key[0]] / 100
+                state = self.sound_state[key][:frames] * volume
+                if state.size == 0:
+                    del self.sound_state[(key[0], key[1])]
+                    continue
+                padding = (0, frames - len(state))
+                state = np.pad(state, padding, 'constant', constant_values=0)
+                self.sound_state[key] = self.sound_state[key][frames:]
                 res += state
             except StopIteration:
-                del self.sound_state[(midi_channel, note)]
+                del self.sound_state[(key[0], key[1])]
                 continue
 
         outdata[:frames] = res[:, np.newaxis]

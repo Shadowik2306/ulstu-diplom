@@ -14,21 +14,6 @@ router = APIRouter(
 )
 
 
-def create_file(file: UploadFile):
-    try:
-        file_location = STATIC_PATH / file.filename
-        with open(file_location, "wb+") as buffer:
-            shutil.copyfileobj(file.file, buffer)
-        return {"info": f"File '{file.filename}' saved at '{file_location}'"}
-    except Exception as e:
-        print(str(e))
-        return {"message": "File download failed", "error": str(e)}
-
-
-@router.get("")
-async def get_files():
-    return [file.name for file in STATIC_PATH.iterdir() if file.is_file()]
-
 
 @router.get("/{file_name}")
 async def get_file_by_name(file_name: str):

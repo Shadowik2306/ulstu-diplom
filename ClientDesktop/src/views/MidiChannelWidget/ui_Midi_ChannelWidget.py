@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'MidiChannelWidget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.1
+## Created by: Qt User Interface Compiler version 6.8.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -22,9 +22,9 @@ from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QHBoxLayout,
 class Ui_MidiChannelWidget(object):
     def setupUi(self, DeviceWidget):
         if not DeviceWidget.objectName():
-            DeviceWidget.setObjectName(u"MidiChannelWidget")
+            DeviceWidget.setObjectName(u"DeviceWidget")
         DeviceWidget.setEnabled(True)
-        DeviceWidget.resize(270, 360)
+        DeviceWidget.resize(270, 364)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -142,6 +142,11 @@ class Ui_MidiChannelWidget(object):
 
         self.verticalLayout_5.addWidget(self.EnableButton)
 
+        self.pushButton = QPushButton(self.verticalFrame)
+        self.pushButton.setObjectName(u"pushButton")
+
+        self.verticalLayout_5.addWidget(self.pushButton)
+
 
         self.verticalLayout_2.addLayout(self.verticalLayout_5)
 
@@ -163,23 +168,24 @@ class Ui_MidiChannelWidget(object):
     # setupUi
 
     def retranslateUi(self, DeviceWidget):
-        DeviceWidget.setWindowTitle(QCoreApplication.translate("MidiChannelWidget", u"Widget", None))
-        self.WidgetNameLabel.setText(QCoreApplication.translate("MidiChannelWidget", u"InputName", None))
-        self.PresetNameLabel.setText(QCoreApplication.translate("MidiChannelWidget", u"PresetName", None))
-        self.RemovePresetButton.setText(QCoreApplication.translate("MidiChannelWidget", u"X", None))
-        self.label_2.setText(QCoreApplication.translate("MidiChannelWidget", u"MIDI From", None))
-        self.DevicesBox.setItemText(0, QCoreApplication.translate("MidiChannelWidget", u"No Device", None))
-        self.DevicesBox.setItemText(1, QCoreApplication.translate("MidiChannelWidget", u"Computer Keyboard", None))
+        DeviceWidget.setWindowTitle(QCoreApplication.translate("DeviceWidget", u"Widget", None))
+        self.WidgetNameLabel.setText(QCoreApplication.translate("DeviceWidget", u"InputName", None))
+        self.PresetNameLabel.setText(QCoreApplication.translate("DeviceWidget", u"PresetName", None))
+        self.RemovePresetButton.setText(QCoreApplication.translate("DeviceWidget", u"X", None))
+        self.label_2.setText(QCoreApplication.translate("DeviceWidget", u"MIDI From", None))
+        self.DevicesBox.setItemText(0, QCoreApplication.translate("DeviceWidget", u"No Device", None))
+        self.DevicesBox.setItemText(1, QCoreApplication.translate("DeviceWidget", u"Computer Keyboard", None))
 
-        self.DevicesBox.setPlaceholderText(QCoreApplication.translate("MidiChannelWidget", u"Devices", None))
-        self.comboBox.setItemText(0, QCoreApplication.translate("MidiChannelWidget", u"All Channels", None))
-        self.comboBox.setItemText(1, QCoreApplication.translate("MidiChannelWidget", u"Ch 1", None))
-        self.comboBox.setItemText(2, QCoreApplication.translate("MidiChannelWidget", u"Ch 2", None))
-        self.comboBox.setItemText(3, QCoreApplication.translate("MidiChannelWidget", u"Ch 3", None))
+        self.DevicesBox.setPlaceholderText(QCoreApplication.translate("DeviceWidget", u"Devices", None))
+        self.comboBox.setItemText(0, QCoreApplication.translate("DeviceWidget", u"All Channels", None))
+        self.comboBox.setItemText(1, QCoreApplication.translate("DeviceWidget", u"Ch 1", None))
+        self.comboBox.setItemText(2, QCoreApplication.translate("DeviceWidget", u"Ch 2", None))
+        self.comboBox.setItemText(3, QCoreApplication.translate("DeviceWidget", u"Ch 3", None))
 
-        self.comboBox.setPlaceholderText(QCoreApplication.translate("MidiChannelWidget", u"Channels", None))
-        self.label_3.setText(QCoreApplication.translate("MidiChannelWidget", u"Volume", None))
-        self.MuteButton.setText(QCoreApplication.translate("MidiChannelWidget", u"Mute", None))
-        self.EnableButton.setText(QCoreApplication.translate("MidiChannelWidget", u"Enable", None))
+        self.comboBox.setPlaceholderText(QCoreApplication.translate("DeviceWidget", u"Channels", None))
+        self.label_3.setText(QCoreApplication.translate("DeviceWidget", u"Volume", None))
+        self.MuteButton.setText(QCoreApplication.translate("DeviceWidget", u"Mute", None))
+        self.EnableButton.setText(QCoreApplication.translate("DeviceWidget", u"Enable", None))
+        self.pushButton.setText(QCoreApplication.translate("DeviceWidget", u"Note OFF disabled", None))
     # retranslateUi
 

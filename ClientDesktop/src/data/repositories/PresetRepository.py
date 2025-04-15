@@ -33,10 +33,14 @@ class PresetRepository:
         if not settings.jwt_secret_key:
             return 1
 
-        response = requests.get(settings.server_url + URL_PATH_PRESET, headers={
-            "Accept": "application/json",
-            "Authorization": "Bearer " + settings.jwt_secret_key
-        })
+        response = requests.get(settings.server_url + URL_PATH_PRESET,
+                                params={
+                                    "show_unsaved": False,
+                                },
+                                headers={
+                                    "Accept": "application/json",
+                                    "Authorization": "Bearer " + settings.jwt_secret_key
+                                })
 
         if response.status_code != 200:
             print("Something went wrong with connection")
@@ -63,10 +67,3 @@ class PresetRepository:
                 session.commit()
 
         return 0
-
-
-
-
-
-
-

@@ -45,6 +45,9 @@ class MidiChannelWidget(QWidget):
         self.ui.EnableButton.clicked.connect(self.enable_clicked)
         self.is_enabled = False
 
+        self.ui.pushButton.clicked.connect(self.note_off_enable_clicked)
+        self.is_note_off_enabled = False
+
         self.id = midi_channel_id
         self.sound_engine = sound_engine_singleton_factory()
         self.sound_engine.add_midi_channel(midi_channel_id, self.ui.VolumeSlider.value())
@@ -101,6 +104,15 @@ class MidiChannelWidget(QWidget):
             self.ui.EnableButton.setStyleSheet("")
         self.is_enabled = not self.is_enabled
 
+    def note_off_enable_clicked(self):
+        if not self.is_note_off_enabled:
+            self.ui.pushButton.setText("Note OFF enabled")
+            self.ui.pushButton.setStyleSheet("background-color: green")
+        else:
+            self.ui.pushButton.setText("Note OFF disabled")
+            self.ui.pushButton.setStyleSheet("")
+        self.is_note_off_enabled = not self.is_note_off_enabled
+
     def midi_host_update(self):
         MidiHost.update_midi_ports()
         new_devices = list(MidiHost.midi_ports)
@@ -134,7 +146,7 @@ class MidiChannelWidget(QWidget):
         if self.__preset is None or not self.is_enabled:
             return
         data = self.__preset.get_sample_sound(note)
-        if not data:
+        if data is None:
             return
         self.sound_engine.add_sound(
             midi_channel_id=self.id,
@@ -143,11 +155,13 @@ class MidiChannelWidget(QWidget):
         )
 
     def note_off(self, note):
-        # self.sound_engine.remove_sound(
-        #     midi_channel_id=self.id,
-        #     note=note,
-        # )
-        pass
+        if not self.is_note_off_enabled:
+            return
+        self.sound_engine.remove_sound(
+            midi_channel_id=self.id,
+            note=note,
+        )
+
 
 
 if __name__ == "__main__":

@@ -27,8 +27,9 @@ async def get_users_presets(
         page: int = Query(ge=1, default=1),
         size: int = Query(ge=1, le=100, default=100),
         text: str = "",
+        show_unsaved: bool = True
 ) -> PresetsPageSchema:
-    res = await PresetRepository.get_all(page - 1, size, show_unsaved=True, user_id=user.id, text=text)
+    res = await PresetRepository.get_all(page - 1, size, show_unsaved=show_unsaved, user_id=user.id, text=text)
     return res
 
 

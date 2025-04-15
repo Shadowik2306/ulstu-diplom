@@ -21,16 +21,8 @@ def parse_sample(sample_file_name):
     file = sf.SoundFile(sample_file_name)
 
     file_freq = sf.read(sample_file_name, dtype='float32')[0]
-    chunk_size = 15
-    num_chunks = len(file_freq) // chunk_size + (len(file_freq) % chunk_size != 0)
 
-    chunks = np.array_split(file_freq, num_chunks)
-    for i in range(len(chunks)):
-        if len(chunks[i]) < chunk_size:
-            padding = (0, chunk_size - len(chunks[i]))
-            chunks[i] = np.pad(chunks[i], padding, 'constant', constant_values=0)
-
-    return chunks
+    return file_freq
 
 
 def download_and_parse_sample(sample_name):
@@ -60,7 +52,7 @@ class SampleRepository:
         presets_connected_samples = [SampleSchemaServer.model_validate(sample) for sample in response.json()]
 
         with session_maker() as session:
-            query = select(SampleModel).filter(SampleModel.id.notin_([sample.id for sample in presets_connected_samples]))
+            query = select(SampleModel).filter(SampleModel.preset_id == preset_id).filter(SampleModel.id.notin_([sample.id for sample in presets_connected_samples]))
             res = session.execute(query)
 
             samples_not_exist = res.scalars().all()
