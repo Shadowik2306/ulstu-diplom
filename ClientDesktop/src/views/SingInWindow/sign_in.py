@@ -38,6 +38,6 @@ class SignInWindow(QDialog):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    widget = Widget()
+    widget = QWidget()
     widget.show()
     sys.exit(app.exec())

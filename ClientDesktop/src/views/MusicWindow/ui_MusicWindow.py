@@ -21,7 +21,7 @@ from PySide6.QtWidgets import (QApplication, QHBoxLayout, QListWidget, QListWidg
 class Ui_MusicWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
-            MainWindow.setObjectName(u"MusicWindow")
+            MainWindow.setObjectName(u"MainWindow")
         MainWindow.setEnabled(True)
         MainWindow.resize(830, 400)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
@@ -43,11 +43,13 @@ class Ui_MusicWindow(object):
         QListWidgetItem(self.PresetList)
         QListWidgetItem(self.PresetList)
         self.PresetList.setObjectName(u"PresetList")
+        self.PresetList.setStyleSheet(u"color: white")
 
         self.verticalLayout_3.addWidget(self.PresetList)
 
         self.UpdatePresetsButton = QPushButton(MainWindow)
         self.UpdatePresetsButton.setObjectName(u"UpdatePresetsButton")
+        self.UpdatePresetsButton.setStyleSheet(u"")
 
         self.verticalLayout_3.addWidget(self.UpdatePresetsButton)
 
@@ -81,17 +83,17 @@ class Ui_MusicWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MusicWindow", u"Widget", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Widget", None))
 
         __sortingEnabled = self.PresetList.isSortingEnabled()
         self.PresetList.setSortingEnabled(False)
         ___qlistwidgetitem = self.PresetList.item(0)
-        ___qlistwidgetitem.setText(QCoreApplication.translate("MusicWindow", u"Test Music 1", None));
+        ___qlistwidgetitem.setText(QCoreApplication.translate("MainWindow", u"Test Music 1", None));
         ___qlistwidgetitem1 = self.PresetList.item(1)
-        ___qlistwidgetitem1.setText(QCoreApplication.translate("MusicWindow", u"Test Music 2", None));
+        ___qlistwidgetitem1.setText(QCoreApplication.translate("MainWindow", u"Test Music 2", None));
         self.PresetList.setSortingEnabled(__sortingEnabled)
 
-        self.UpdatePresetsButton.setText(QCoreApplication.translate("MusicWindow", u"Update", None))
-        self.ComputerKeyboardButton.setText(QCoreApplication.translate("MusicWindow", u"Computer Keyboard", None))
+        self.UpdatePresetsButton.setText(QCoreApplication.translate("MainWindow", u"Update", None))
+        self.ComputerKeyboardButton.setText(QCoreApplication.translate("MainWindow", u"Computer Keyboard", None))
     # retranslateUi
 

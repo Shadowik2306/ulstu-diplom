@@ -57,6 +57,7 @@ class Ui_MidiChannelWidget(object):
         self.WidgetNameLabel = QLabel(self.verticalFrame)
         self.WidgetNameLabel.setObjectName(u"WidgetNameLabel")
         self.WidgetNameLabel.setMaximumSize(QSize(16777215, 19))
+        self.WidgetNameLabel.setStyleSheet(u"color: white")
         self.WidgetNameLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.verticalLayout_3.addWidget(self.WidgetNameLabel)
@@ -72,11 +73,13 @@ class Ui_MidiChannelWidget(object):
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.PresetNameLabel = QLabel(self.verticalFrame)
         self.PresetNameLabel.setObjectName(u"PresetNameLabel")
+        self.PresetNameLabel.setStyleSheet(u"color: white")
 
         self.horizontalLayout.addWidget(self.PresetNameLabel)
 
         self.RemovePresetButton = QPushButton(self.verticalFrame)
         self.RemovePresetButton.setObjectName(u"RemovePresetButton")
+        self.RemovePresetButton.setStyleSheet(u"color: white;")
 
         self.horizontalLayout.addWidget(self.RemovePresetButton)
 
@@ -90,6 +93,7 @@ class Ui_MidiChannelWidget(object):
         self.label_2 = QLabel(self.verticalFrame)
         self.label_2.setObjectName(u"label_2")
         self.label_2.setMaximumSize(QSize(16777215, 30))
+        self.label_2.setStyleSheet(u"color: white")
 
         self.verticalLayout_4.addWidget(self.label_2)
 
@@ -97,6 +101,7 @@ class Ui_MidiChannelWidget(object):
         self.DevicesBox.addItem("")
         self.DevicesBox.addItem("")
         self.DevicesBox.setObjectName(u"DevicesBox")
+        self.DevicesBox.setStyleSheet(u"color: white")
 
         self.verticalLayout_4.addWidget(self.DevicesBox)
 
@@ -106,6 +111,7 @@ class Ui_MidiChannelWidget(object):
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.setObjectName(u"comboBox")
+        self.comboBox.setStyleSheet(u"color: white")
 
         self.verticalLayout_4.addWidget(self.comboBox)
 
@@ -116,6 +122,7 @@ class Ui_MidiChannelWidget(object):
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
         self.label_3 = QLabel(self.verticalFrame)
         self.label_3.setObjectName(u"label_3")
+        self.label_3.setStyleSheet(u"color: white")
 
         self.verticalLayout_6.addWidget(self.label_3)
 
@@ -134,16 +141,19 @@ class Ui_MidiChannelWidget(object):
         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
         self.MuteButton = QPushButton(self.verticalFrame)
         self.MuteButton.setObjectName(u"MuteButton")
+        self.MuteButton.setStyleSheet(u"color: white;")
 
         self.verticalLayout_5.addWidget(self.MuteButton)
 
         self.EnableButton = QPushButton(self.verticalFrame)
         self.EnableButton.setObjectName(u"EnableButton")
+        self.EnableButton.setStyleSheet(u"color: white;")
 
         self.verticalLayout_5.addWidget(self.EnableButton)
 
         self.pushButton = QPushButton(self.verticalFrame)
         self.pushButton.setObjectName(u"pushButton")
+        self.pushButton.setStyleSheet(u"color: white;")
 
         self.verticalLayout_5.addWidget(self.pushButton)
 

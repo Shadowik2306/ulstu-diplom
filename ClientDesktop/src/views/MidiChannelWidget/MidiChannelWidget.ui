@@ -84,6 +84,9 @@
                <height>19</height>
               </size>
              </property>
+             <property name="styleSheet">
+              <string notr="true">color: white</string>
+             </property>
              <property name="text">
               <string>InputName</string>
              </property>
@@ -111,6 +114,9 @@
           <layout class="QHBoxLayout" name="horizontalLayout" stretch="3,1">
            <item>
             <widget class="QLabel" name="PresetNameLabel">
+             <property name="styleSheet">
+              <string notr="true">color: white</string>
+             </property>
              <property name="text">
               <string>PresetName</string>
              </property>
@@ -118,6 +124,9 @@
            </item>
            <item>
             <widget class="QPushButton" name="RemovePresetButton">
+             <property name="styleSheet">
+              <string notr="true">color: white;</string>
+             </property>
              <property name="text">
               <string>X</string>
              </property>
@@ -135,6 +144,9 @@
                <height>30</height>
               </size>
              </property>
+             <property name="styleSheet">
+              <string notr="true">color: white</string>
+             </property>
              <property name="text">
               <string>MIDI From</string>
              </property>
@@ -142,6 +154,9 @@
            </item>
            <item>
             <widget class="QComboBox" name="DevicesBox">
+             <property name="styleSheet">
+              <string notr="true">color: white</string>
+             </property>
              <property name="placeholderText">
               <string>Devices</string>
              </property>
@@ -159,6 +174,9 @@
            </item>
            <item>
             <widget class="QComboBox" name="comboBox">
+             <property name="styleSheet">
+              <string notr="true">color: white</string>
+             </property>
              <property name="placeholderText">
               <string>Channels</string>
              </property>
@@ -190,6 +208,9 @@
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <item>
             <widget class="QLabel" name="label_3">
+             <property name="styleSheet">
+              <string notr="true">color: white</string>
+             </property>
              <property name="text">
               <string>Volume</string>
              </property>
@@ -214,6 +235,9 @@
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
             <widget class="QPushButton" name="MuteButton">
+             <property name="styleSheet">
+              <string notr="true">color: white;</string>
+             </property>
              <property name="text">
               <string>Mute</string>
              </property>
@@ -221,6 +245,9 @@
            </item>
            <item>
             <widget class="QPushButton" name="EnableButton">
+             <property name="styleSheet">
+              <string notr="true">color: white;</string>
+             </property>
              <property name="text">
               <string>Enable</string>
              </property>
@@ -228,6 +255,9 @@
            </item>
            <item>
             <widget class="QPushButton" name="pushButton">
+             <property name="styleSheet">
+              <string notr="true">color: white;</string>
+             </property>
              <property name="text">
               <string>Note OFF disabled</string>
              </property>

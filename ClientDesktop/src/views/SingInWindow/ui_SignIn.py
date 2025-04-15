@@ -47,6 +47,7 @@ class Ui_SignIn(object):
         font.setPointSize(64)
         font.setBold(True)
         self.SignUpLabel.setFont(font)
+        self.SignUpLabel.setStyleSheet(u"color: white")
         self.SignUpLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.DataLayout.addWidget(self.SignUpLabel)
@@ -72,6 +73,7 @@ class Ui_SignIn(object):
         font1.setPointSize(16)
         font1.setBold(True)
         self.EmailOrLoginLabel.setFont(font1)
+        self.EmailOrLoginLabel.setStyleSheet(u"color: white")
 
         self.InputLayout.addWidget(self.EmailOrLoginLabel)
 
@@ -88,6 +90,7 @@ class Ui_SignIn(object):
         self.PasswordLabel.setObjectName(u"PasswordLabel")
         self.PasswordLabel.setMaximumSize(QSize(16777215, 25))
         self.PasswordLabel.setFont(font1)
+        self.PasswordLabel.setStyleSheet(u"color: white")
 
         self.InputLayout.addWidget(self.PasswordLabel)
 
@@ -97,6 +100,7 @@ class Ui_SignIn(object):
         self.PasswordLineEdit.setStyleSheet(u"background-color: 'white';\n"
 "color: black;\n"
 "border-radius: 5px;")
+        self.PasswordLineEdit.setEchoMode(QLineEdit.EchoMode.Password)
 
         self.InputLayout.addWidget(self.PasswordLineEdit)
 

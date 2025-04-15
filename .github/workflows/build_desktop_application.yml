@@ -17,6 +17,7 @@ jobs:
       with:
         requirements: ClientDesktop/requirements.txt
         spec: ClientDesktop/Tinkling.spec
+        compression_level: 9
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
@@ -36,6 +37,7 @@ jobs:
         with:
           requirements: ClientDesktop/requirements.txt
           spec: ClientDesktop/Tinkling.spec
+          compression_level: 9
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4

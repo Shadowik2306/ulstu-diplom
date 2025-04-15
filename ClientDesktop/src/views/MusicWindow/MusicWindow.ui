@@ -47,6 +47,9 @@
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
         <widget class="QListWidget" name="PresetList">
+         <property name="styleSheet">
+          <string notr="true">color: white</string>
+         </property>
          <item>
           <property name="text">
            <string>Test Music 1</string>
@@ -61,6 +64,9 @@
        </item>
        <item>
         <widget class="QPushButton" name="UpdatePresetsButton">
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
          <property name="text">
           <string>Update</string>
          </property>
