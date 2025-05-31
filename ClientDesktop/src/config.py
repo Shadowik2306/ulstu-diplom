@@ -16,7 +16,7 @@ class Settings(BaseSettings):
 
     @property
     def server_url(self):
-        return "https://tinkling.ru/api"
+        return "https://tinkling.ru.tuna.am/api"
 
     @property
     def jwt_secret_key(self) -> str | None:
